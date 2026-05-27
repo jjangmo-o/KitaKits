@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings | KitaKits</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="container">
             <div class="header-logo">
-                <img src="assets/images/logo.png" alt="KitaKits Logo">
+                <img src="../assets/images/logo.png" alt="KitaKits Logo">
             </div>
             <div class="header-main">
                 <div class="header-content">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="index.php">Home (Missions)</a>
+                        <a href="../index.php">Home (Missions)</a>
                         <a href="my_bookings.php">My Bookings</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
@@ -32,7 +32,7 @@
     </header>
 
     <main class="container">
-        <a href="index.php" class="btn-back">
+        <a href="../index.php" class="btn-back">
             <span>&larr; </span>
             Back to Missions
         </a>
@@ -75,7 +75,7 @@
         </div>
     </main>
 
-    <script src="assets/js/api.js"></script>
-    <script src="assets/js/my-bookings.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/my-bookings.js"></script>
 </body>
 </html>

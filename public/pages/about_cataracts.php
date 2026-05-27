@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Cataracts | KitaKits</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="container">
             <div class="header-logo">
-                <img src="assets/images/logo.png" alt="Kitakits Logo">
+                <img src="../assets/images/logo.png" alt="Kitakits Logo">
             </div>
             <div class="header-main">
                 <div class="header-content">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="index.php">Home (Missions)</a>
+                        <a href="../index.php">Home (Missions)</a>
                         <a href="my_bookings.php">My Bookings</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
@@ -32,7 +32,7 @@
     </header>
 
     <main class="container">
-        <a href="index.php" class="btn-back">
+        <a href="../index.php" class="btn-back">
             <span>â†</span>
             Back to Missions
         </a>
@@ -277,7 +277,7 @@
             <h2>Ready for Treatment?</h2>
             <p>If you believe you have cataracts or have been diagnosed with cataracts, KitaKits can help you find a free or subsidized cataract surgery mission in your area.</p>
             <div class="action-spacer">
-                <a href="index.php" class="btn-primary inline-flex-link">
+                <a href="../index.php" class="btn-primary inline-flex-link">
                     <span>ðŸ”</span>
                     Find Missions Near You
                 </a>

@@ -28,33 +28,52 @@ The project has two main sides:
 The homepage currently shows an **Admin Dashboard** button on the user side. This is intentionally visible only for easy project navigation and demonstration during checking.
 
 
-## Files Included
+## Project Structure
 
-- `index.php` - Homepage that displays available and fully booked missions.
-- `mission_details.php` - Shows full details for a selected mission.
-- `book_slot.php` - Allows a patient to book a mission slot.
-- `my_bookings.php` - Lets patients search for their bookings.
-- `patient_guide.php` - Patient preparation and recovery guide.
-- `faq.php` - Frequently asked questions.
-- `about_cataracts.php` - Cataract information with source links.
-- `admin_dashboard.php` - Admin page for viewing missions and bookings.
-- `add_mission.php` - Admin page for adding missions.
-- `edit_mission.php` - Admin page for editing missions.
-- `delete_mission.php` - Handles mission deletion.
-- `db.php` - MySQL database connection file.
-- `api/` - JSON endpoints used by `fetch()` for missions, bookings, admin data, and delete actions.
-- `style.css` - Main stylesheet for the project.
-- `kitakits_db.sql` - Database export file used to recreate the database and sample data.
-- `assets/images/` - Image files used by the website.
-- `assets/icons/` - Icon files used by navigation and action buttons.
-- `assets/js/` - JavaScript files for AJAX loading, JSON parsing, and dynamic HTML rendering.
+```text
+KitaKits/
+├── app/
+│   └── config/
+│       └── db.php
+├── database/
+│   └── kitakits_db.sql
+├── public/
+│   ├── admin/
+│   │   ├── admin_dashboard.php
+│   │   ├── add_mission.php
+│   │   └── edit_mission.php
+│   ├── api/
+│   │   ├── admin_dashboard.php
+│   │   ├── book_slot.php
+│   │   ├── bookings.php
+│   │   ├── delete_booking.php
+│   │   └── missions.php
+│   ├── assets/
+│   │   ├── css/
+│   │   ├── icons/
+│   │   ├── images/
+│   │   └── js/
+│   ├── pages/
+│   │   ├── about_cataracts.php
+│   │   ├── book_slot.php
+│   │   ├── edit_booking.php
+│   │   ├── faq.php
+│   │   ├── mission_details.php
+│   │   ├── my_bookings.php
+│   │   └── patient_guide.php
+│   └── index.php
+├── index.php
+└── README.md
+```
+
+The root `index.php` redirects to `public/index.php` so the app still opens from the project root in XAMPP. Main patient pages live in `public/pages/`, admin pages live in `public/admin/`, API endpoints live in `public/api/`, and the database connection is kept outside the public folder in `app/config/db.php`.
 
 ## Database
 
 The project uses MySQL through XAMPP. The database file is:
 
 ```text
-kitakits_db.sql
+database/kitakits_db.sql
 ```
 
 This SQL file should be imported into phpMyAdmin so the app can access the required tables and rows.
@@ -64,7 +83,7 @@ This SQL file should be imported into phpMyAdmin so the app can access the requi
 1. Copy the entire `KITAKITS` folder into XAMPP `htdocs` directory.
 
    ```text
-   C:\xampp\htdocs\KITAKITS\
+   C:\xampp\htdocs\KitaKits\
    ```
 
 2. Start **Apache** and **MySQL** in the XAMPP Control Panel.
@@ -86,18 +105,18 @@ This SQL file should be imported into phpMyAdmin so the app can access the requi
    - Click `kitakits_db`
    - Go to the `Import` tab
    - Click `Choose File`
-   - Select `kitakits_db.sql`
+   - Select `database/kitakits_db.sql`
    - Click `Go`
 
 6. Open the project in the browser:
 
    ```text
-   http://localhost/KITAKITS/index.php
+   http://localhost/KitaKits/
    ```
 
 ## Database Connection
 
-The database connection is configured in `db.php`. If the project does not connect on another computer, check that the database name, username, and password match the local XAMPP setup.
+The database connection is configured in `app/config/db.php`. If the project does not connect on another computer, check that the database name, username, and password match the local XAMPP setup.
 
 Typical XAMPP settings:
 
@@ -111,7 +130,7 @@ Password: empty
 ## More Notes to take po 
 
 - The project should be run through XAMPP, not by opening the PHP files directly.
-- The `.sql` file must be imported before testing database-related features.
+- The `database/kitakits_db.sql` file must be imported before testing database-related features.
 - Bookings made in the app are saved in MySQL.
 - After importing `kitakits_db.sql`, you can cross-check the database rows po through phpMyAdmin or the admin dashboard :>
 - The visible admin dashboard button is for demonstration only po and rest assured that it will be secured in a real deployment. purely for demo purposes only po.

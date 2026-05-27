@@ -23,11 +23,11 @@
                 <td>${escapeHtml(mission.total_bookings)}</td>
                 <td class="table-actions">
                     <a href="edit_mission.php?id=${encodeURIComponent(mission.mission_id)}" class="btn-edit">
-                        <img src="assets/icons/edit.png" alt="" class="btn-icon">
+                        <img src="../assets/icons/edit.png" alt="" class="btn-icon">
                         Edit
                     </a>
                     <button type="button" class="btn-delete" data-delete-mission data-id="${escapeHtml(mission.mission_id)}">
-                        <img src="assets/icons/delete.png" alt="" class="btn-icon">
+                        <img src="../assets/icons/delete.png" alt="" class="btn-icon">
                         Delete
                     </button>
                 </td>
@@ -52,7 +52,7 @@
         setLoading(loading, true, 'Loading admin tables...');
 
         try {
-            const payload = await fetchJson('api/admin_dashboard.php');
+            const payload = await fetchJson('../api/admin_dashboard.php');
             const missions = payload.data.missions || [];
             const bookings = payload.data.bookings || [];
 
@@ -88,7 +88,7 @@
         button.disabled = true;
 
         try {
-            const payload = await fetchJson(`api/delete_mission.php?id=${encodeURIComponent(button.dataset.id)}`, {
+            const payload = await fetchJson(`../api/delete_mission.php?id=${encodeURIComponent(button.dataset.id)}`, {
                 method: 'DELETE'
             });
             await loadDashboard(payload.message);

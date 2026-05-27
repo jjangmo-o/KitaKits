@@ -12,7 +12,7 @@
         const slotsContent = isFullyBooked
             ? '<div class="mission-unavailable">All slots booked</div>'
             : `<div class="mission-slots"><strong>${escapeHtml(mission.available_slots)}</strong> slots available</div>
-               <a href="book_slot.php?id=${encodeURIComponent(mission.mission_id)}" class="btn-book">
+               <a href="pages/book_slot.php?id=${encodeURIComponent(mission.mission_id)}" class="btn-book">
                    <img src="assets/icons/book.png" alt="" class="btn-icon">
                    Book Your Slot
                </a>`;

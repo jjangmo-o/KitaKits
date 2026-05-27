@@ -1,12 +1,12 @@
 <?php
-require_once('db.php');
+require_once(__DIR__ . '/../../app/config/db.php');
 
-// get mission ID from the URL. e.g. delete_mission.php?id=3
+// get mission ID from the URL. e.g. actions/delete_mission.php?id=3
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // if no valid ID, redirect back to dashboard
 if ($mission_id === 0) {
-    header("Location: admin_dashboard.php");
+    header("Location: ../admin/admin_dashboard.php");
     exit();
 }
 
@@ -22,12 +22,12 @@ try {
     }
 
     // Redirect back to dashboard with a success flag
-    header("Location: admin_dashboard.php?deleted=1");
+    header("Location: ../admin/admin_dashboard.php?deleted=1");
     exit();
 
 } catch (PDOException $e) {
     // if something went wrong, redirect back with error info
-    header("Location: admin_dashboard.php?error=1");
+    header("Location: ../admin/admin_dashboard.php?error=1");
     exit();
 }
 ?>

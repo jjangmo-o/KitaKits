@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | KitaKits</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="container">
             <div class="header-logo">
-                <img src="assets/images/logo.png" alt="KitaKits Logo">
+                <img src="../assets/images/logo.png" alt="KitaKits Logo">
             </div>
             <div class="header-content">
                 <h1>Admin Dashboard</h1>
@@ -21,7 +21,7 @@
     </header>
 
     <main class="container">
-        <a href="index.php" class="btn-back">
+        <a href="../index.php" class="btn-back">
             <span>&larr; </span>
             Back to Patient Page
         </a>
@@ -37,7 +37,7 @@
         <div class="dashboard-header">
             <h2>All Missions</h2>
             <a href="add_mission.php" class="btn-primary">
-                <img src="assets/icons/add.png" alt="" class="btn-icon">
+                <img src="../assets/icons/add.png" alt="" class="btn-icon">
                 Add New Mission
             </a>
         </div>
@@ -79,7 +79,7 @@
         </table>
     </main>
 
-    <script src="assets/js/api.js"></script>
-    <script src="assets/js/admin-dashboard.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/admin-dashboard.js"></script>
 </body>
 </html>

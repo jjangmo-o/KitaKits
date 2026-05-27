@@ -1,12 +1,12 @@
 <?php
-require_once('db.php');
+require_once(__DIR__ . '/../../app/config/db.php');
 
 // Get the mission ID from the URL
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // If no valid ID, redirect to homepage
 if ($mission_id === 0) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -18,7 +18,7 @@ $mission = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // If mission doesn't exist, go back home
 if (!$mission) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -44,14 +44,14 @@ if ($days_until < 0) {
 <head>
     <meta charset="UTF-8">
     <title>Mission Details | KitaKits</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="container">
             <div class="header-logo">
-                <img src="assets/images/logo.png" alt="KitaKits Logo">
+                <img src="../assets/images/logo.png" alt="KitaKits Logo">
             </div>
             <div class="header-main">
                 <div class="header-content">
@@ -60,7 +60,7 @@ if ($days_until < 0) {
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="index.php">Home (Missions)</a>
+                        <a href="../index.php">Home (Missions)</a>
                         <a href="my_bookings.php">My Bookings</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
@@ -72,7 +72,7 @@ if ($days_until < 0) {
     </header>
 
     <main class="container">
-        <a href="index.php" class="btn-back">
+        <a href="../index.php" class="btn-back">
             <span>←</span>
             Back to Missions
         </a>

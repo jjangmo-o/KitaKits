@@ -1,5 +1,5 @@
 <?php
-require_once('db.php');
+require_once(__DIR__ . '/../../app/config/db.php');
 
 function normalize_contact_number($contact)
 {
@@ -15,7 +15,7 @@ $booking_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $contact = isset($_GET['contact']) ? normalize_contact_number($_GET['contact']) : '';
 
 if ($booking_id <= 0 || $contact === '' || !contact_number_is_valid($contact)) {
-    header("Location: my_bookings.php");
+    header("Location: ../pages/my_bookings.php");
     exit();
 }
 
@@ -46,7 +46,7 @@ try {
     }
 
     $conn->commit();
-    header("Location: my_bookings.php?contact=" . urlencode($contact) . "&deleted=1");
+    header("Location: ../pages/my_bookings.php?contact=" . urlencode($contact) . "&deleted=1");
     exit();
 
 } catch (PDOException $e) {
@@ -54,7 +54,7 @@ try {
         $conn->rollBack();
     }
 
-    header("Location: my_bookings.php?contact=" . urlencode($contact));
+    header("Location: ../pages/my_bookings.php?contact=" . urlencode($contact));
     exit();
 }
 ?>

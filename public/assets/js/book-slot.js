@@ -19,7 +19,7 @@
         submitButton.disabled = true;
 
         try {
-            const payload = await fetchJson('api/book_slot.php', {
+            const payload = await fetchJson('../api/book_slot.php', {
                 method: 'POST',
                 body: new FormData(form)
             });

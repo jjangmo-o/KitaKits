@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../db.php');
+require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/_response.php');
 
 if (!in_array($_SERVER['REQUEST_METHOD'], ['DELETE', 'POST'], true)) {

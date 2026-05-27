@@ -1,5 +1,5 @@
 <?php
-require_once('db.php');
+require_once(__DIR__ . '/../../app/config/db.php');
 
 $error = '';
 
@@ -51,14 +51,14 @@ if (isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Mission | KitaKits</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="container">
             <div class="header-logo">
-                <img src="assets/images/logo.png" alt="KitaKits Logo">
+                <img src="../assets/images/logo.png" alt="KitaKits Logo">
             </div>
             <div class="header-content">
                 <h1>Add New Mission</h1>

@@ -1,5 +1,5 @@
 <?php
-require_once('db.php');
+require_once(__DIR__ . '/../../app/config/db.php');
 
 function normalize_contact_number($contact)
 {
@@ -14,7 +14,7 @@ function contact_number_is_valid($contact)
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($mission_id === 0) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -24,7 +24,7 @@ $stmt->execute([':id' => $mission_id]);
 $mission = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$mission) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -52,7 +52,7 @@ if (isset($_POST['submit'])) {
 
             if (!$locked_mission) {
                 $conn->rollBack();
-                header("Location: index.php");
+                header("Location: ../index.php");
                 exit();
             }
 
@@ -83,7 +83,7 @@ if (isset($_POST['submit'])) {
                     $error = 'This mission is already fully booked.';
                 } else {
                     $conn->commit();
-                    header("Location: index.php?success=1");
+                    header("Location: ../index.php?success=1");
                     exit();
                 }
             }
@@ -108,14 +108,14 @@ if (isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book a Slot | KitaKits</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="container">
             <div class="header-logo">
-                <img src="assets/images/logo.png" alt="KitaKits Logo">
+                <img src="../assets/images/logo.png" alt="KitaKits Logo">
             </div>
             <div class="header-main">
                 <div class="header-content">
@@ -124,7 +124,7 @@ if (isset($_POST['submit'])) {
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="index.php">Home (Missions)</a>
+                        <a href="../index.php">Home (Missions)</a>
                         <a href="my_bookings.php">My Bookings</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
@@ -136,7 +136,7 @@ if (isset($_POST['submit'])) {
     </header>
 
     <div class="container">
-        <a href="index.php" class="btn-back">
+        <a href="../index.php" class="btn-back">
             <span>&larr; </span>
             Back to Available Missions
         </a>
@@ -201,7 +201,7 @@ if (isset($_POST['submit'])) {
             </ul>
         </div>
     </div>
-    <script src="assets/js/api.js"></script>
-    <script src="assets/js/book-slot.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/book-slot.js"></script>
 </body>
 </html>

@@ -71,7 +71,7 @@
         tips.hidden = true;
 
         try {
-            const payload = await fetchJson(`api/bookings.php?contact=${encodeURIComponent(contact)}`);
+            const payload = await fetchJson(`../api/bookings.php?contact=${encodeURIComponent(contact)}`);
             const bookings = payload.data.bookings || [];
 
             if (bookings.length === 0) {
@@ -112,7 +112,7 @@
         try {
             const id = button.dataset.id;
             const contact = button.dataset.contact;
-            const payload = await fetchJson(`api/delete_booking.php?id=${encodeURIComponent(id)}&contact=${encodeURIComponent(contact)}`, {
+            const payload = await fetchJson(`../api/delete_booking.php?id=${encodeURIComponent(id)}&contact=${encodeURIComponent(contact)}`, {
                 method: 'DELETE'
             });
 

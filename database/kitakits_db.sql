@@ -31,7 +31,10 @@ CREATE TABLE `bookings` (
   `booking_id` int(11) NOT NULL,
   `mission_id` int(11) NOT NULL,
   `patient_name` varchar(100) NOT NULL,
-  `contact_number` varchar(20) NOT NULL
+  `contact_number` varchar(20) NOT NULL,
+  `booking_ref` varchar(20) DEFAULT NULL,
+  `status` enum('booked','confirmed','cancelled') NOT NULL DEFAULT 'booked',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -73,6 +76,35 @@ INSERT INTO `missions` (`mission_id`, `organizer_name`, `mission_date`, `locatio
 (10, 'Maxicare Primary Care Clinic', '2027-05-13', 'Maxicare Primary Care Clinic - Bridgetowne', 3200);
 
 --
+-- Table structure for table `patients`
+--
+
+CREATE TABLE `patients` (
+  `patient_id` int(11) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `contact_number` varchar(20) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `pre_screenings`
+--
+
+CREATE TABLE `pre_screenings` (
+  `pre_screening_id` int(11) NOT NULL,
+  `booking_id` int(11) NOT NULL,
+  `patient_id` int(11) DEFAULT NULL,
+  `responses` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `booking_id` (`booking_id`),
+  KEY `patient_id` (`patient_id`),
+  CONSTRAINT `pre_screenings_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE,
+  CONSTRAINT `pre_screenings_ibfk_2` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
 -- Indexes for dumped tables
 --
 
@@ -90,6 +122,18 @@ ALTER TABLE `missions`
   ADD PRIMARY KEY (`mission_id`);
 
 --
+-- Indexes for table `patients`
+--
+ALTER TABLE `patients`
+  ADD PRIMARY KEY (`patient_id`);
+
+--
+-- Indexes for table `pre_screenings`
+--
+ALTER TABLE `pre_screenings`
+  ADD PRIMARY KEY (`pre_screening_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -104,6 +148,18 @@ ALTER TABLE `bookings`
 --
 ALTER TABLE `missions`
   MODIFY `mission_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `patients`
+--
+ALTER TABLE `patients`
+  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT for table `pre_screenings`
+--
+ALTER TABLE `pre_screenings`
+  MODIFY `pre_screening_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- Constraints for dumped tables

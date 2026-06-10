@@ -27,59 +27,64 @@ if (!contact_number_is_valid($contact_number)) {
 }
 
 try {
-    $conn->beginTransaction();
+    // Create booking without decrementing mission slots. Confirmation will decrement slots.
+    try {
+        $conn->beginTransaction();
 
-    $lock = $conn->prepare("SELECT mission_id, organizer_name, mission_date, location, available_slots
-                            FROM missions
-                            WHERE mission_id = :id
-                            FOR UPDATE");
-    $lock->execute([':id' => $mission_id]);
-    $mission = $lock->fetch(PDO::FETCH_ASSOC);
+        $select = $conn->prepare("SELECT mission_id, organizer_name, mission_date, location, available_slots
+                                  FROM missions
+                                  WHERE mission_id = :id");
+        $select->execute([':id' => $mission_id]);
+        $mission = $select->fetch(PDO::FETCH_ASSOC);
 
-    if (!$mission) {
-        $conn->rollBack();
-        json_error('Mission not found.', 404);
+        if (!$mission) {
+            $conn->rollBack();
+            json_error('Mission not found.', 404);
+        }
+
+        if ($mission['mission_date'] < date('Y-m-d')) {
+            $conn->rollBack();
+            json_error('This mission date has already passed.', 409);
+        }
+
+        if ((int)$mission['available_slots'] <= 0) {
+            $conn->rollBack();
+            json_error('This mission is fully booked. Please choose another mission.', 409);
+        }
+
+        $insert = $conn->prepare("INSERT INTO bookings (mission_id, patient_name, contact_number, status)
+                                  VALUES (:mission_id, :patient_name, :contact_number, 'booked')");
+        $insert->execute([
+            ':mission_id' => $mission_id,
+            ':patient_name' => $patient_name,
+            ':contact_number' => $contact_number
+        ]);
+        $booking_id = (int)$conn->lastInsertId();
+
+        // generate booking reference: KK-YYYY-NNNNN
+        $booking_ref = sprintf('KK-%s-%05d', date('Y'), $booking_id);
+
+        // save booking_ref
+        $updateRef = $conn->prepare("UPDATE bookings SET booking_ref = :booking_ref WHERE booking_id = :booking_id");
+        $updateRef->execute([':booking_ref' => $booking_ref, ':booking_id' => $booking_id]);
+
+        $conn->commit();
+
+        json_success('Your slot request has been received. It will be confirmed by an admin.', [
+            'booking_id' => $booking_id,
+            'booking_ref' => $booking_ref,
+            'mission_id' => $mission_id,
+            'patient_name' => $patient_name,
+            'contact_number' => $contact_number,
+            'available_slots' => (int)$mission['available_slots'],
+            'status' => 'booked'
+        ], 201);
+    } catch (PDOException $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        json_error('Unable to process the booking right now. Please try again later.', 500);
     }
-
-    if ($mission['mission_date'] < date('Y-m-d')) {
-        $conn->rollBack();
-        json_error('This mission date has already passed.', 409);
-    }
-
-    if ((int)$mission['available_slots'] <= 0) {
-        $conn->rollBack();
-        json_error('This mission is already fully booked.', 409);
-    }
-
-    $insert = $conn->prepare("INSERT INTO bookings (mission_id, patient_name, contact_number)
-                              VALUES (:mission_id, :patient_name, :contact_number)");
-    $insert->execute([
-        ':mission_id' => $mission_id,
-        ':patient_name' => $patient_name,
-        ':contact_number' => $contact_number
-    ]);
-    $booking_id = (int)$conn->lastInsertId();
-
-    $update = $conn->prepare("UPDATE missions
-                              SET available_slots = available_slots - 1
-                              WHERE mission_id = :mission_id AND available_slots > 0");
-    $update->execute([':mission_id' => $mission_id]);
-
-    if ($update->rowCount() !== 1) {
-        $conn->rollBack();
-        json_error('This mission is already fully booked.', 409);
-    }
-
-    $remaining_slots = (int)$mission['available_slots'] - 1;
-    $conn->commit();
-
-    json_success('Your slot has been booked successfully. See you at the mission.', [
-        'booking_id' => $booking_id,
-        'mission_id' => $mission_id,
-        'patient_name' => $patient_name,
-        'contact_number' => $contact_number,
-        'remaining_slots' => $remaining_slots
-    ], 201);
 } catch (PDOException $e) {
     if ($conn->inTransaction()) {
         $conn->rollBack();

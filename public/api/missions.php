@@ -18,16 +18,39 @@ function format_mission($mission)
 }
 
 try {
-    $available = $conn->prepare("SELECT * FROM missions WHERE available_slots > 0 ORDER BY mission_date ASC");
-    $available->execute();
+    // Filters: q (keyword), status (available|full|all), sort (date|slots), order (asc|desc), city
+    $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+    $status = isset($_GET['status']) ? $_GET['status'] : 'all';
+    $sort = isset($_GET['sort']) && $_GET['sort'] === 'slots' ? 'available_slots' : 'mission_date';
+    $order = isset($_GET['order']) && strtolower($_GET['order']) === 'desc' ? 'DESC' : 'ASC';
+    $city = isset($_GET['city']) ? trim($_GET['city']) : '';
 
-    $fully_booked = $conn->prepare("SELECT * FROM missions WHERE available_slots = 0 ORDER BY mission_date ASC");
-    $fully_booked->execute();
+    $where = [];
+    $params = [];
 
-    json_success('Missions loaded.', [
-        'available' => array_map('format_mission', $available->fetchAll(PDO::FETCH_ASSOC)),
-        'fully_booked' => array_map('format_mission', $fully_booked->fetchAll(PDO::FETCH_ASSOC))
-    ]);
+    if ($q !== '') {
+        $where[] = "(organizer_name LIKE :q OR location LIKE :q)";
+        $params[':q'] = '%' . $q . '%';
+    }
+
+    if ($city !== '') {
+        $where[] = "location LIKE :city";
+        $params[':city'] = '%' . $city . '%';
+    }
+
+    if ($status === 'available') {
+        $where[] = "available_slots > 0";
+    } elseif ($status === 'full') {
+        $where[] = "available_slots = 0";
+    }
+
+    $sql = "SELECT * FROM missions" . (count($where) ? ' WHERE ' . implode(' AND ', $where) : '') . " ORDER BY $sort $order";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    $missions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    json_success('Missions loaded.', array_map('format_mission', $missions));
 } catch (PDOException $e) {
     json_error('Unable to load missions right now. Please try again later.', 500);
 }

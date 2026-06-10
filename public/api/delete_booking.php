@@ -16,9 +16,17 @@ if ($booking_id <= 0 || $contact === '' || !contact_number_is_valid($contact)) {
 }
 
 try {
+    // allow admin to cancel any booking
+    $isAdminAction = false;
+    if (isset($_SERVER['HTTP_X_ADMIN_TOKEN']) || isset($_GET['admin_token'])) {
+        require_once(__DIR__ . '/_auth.php');
+        require_admin();
+        $isAdminAction = true;
+    }
+
     $conn->beginTransaction();
 
-    $select = $conn->prepare("SELECT booking_id, mission_id
+    $select = $conn->prepare("SELECT booking_id, mission_id, status
                               FROM bookings
                               WHERE booking_id = :id AND contact_number = :contact
                               FOR UPDATE");
@@ -33,16 +41,26 @@ try {
         json_error('Booking not found.', 404);
     }
 
-    $delete = $conn->prepare("DELETE FROM bookings WHERE booking_id = :id AND contact_number = :contact");
-    $delete->execute([
-        ':id' => $booking_id,
-        ':contact' => $contact
-    ]);
+    // Soft-cancel: mark booking as cancelled. If it was confirmed, return slot to mission.
+    $wasConfirmed = ($booking['status'] === 'confirmed');
 
-    $update = $conn->prepare("UPDATE missions
-                              SET available_slots = available_slots + 1
-                              WHERE mission_id = :mission_id");
-    $update->execute([':mission_id' => $booking['mission_id']]);
+    if ($isAdminAction) {
+        $updateBooking = $conn->prepare("UPDATE bookings SET status = 'cancelled' WHERE booking_id = :id");
+        $updateBooking->execute([':id' => $booking_id]);
+    } else {
+        $updateBooking = $conn->prepare("UPDATE bookings SET status = 'cancelled' WHERE booking_id = :id AND contact_number = :contact");
+        $updateBooking->execute([
+            ':id' => $booking_id,
+            ':contact' => $contact
+        ]);
+    }
+
+    if ($wasConfirmed) {
+        $update = $conn->prepare("UPDATE missions
+                                  SET available_slots = available_slots + 1
+                                  WHERE mission_id = :mission_id");
+        $update->execute([':mission_id' => $booking['mission_id']]);
+    }
 
     $conn->commit();
 

@@ -20,6 +20,7 @@ function format_booking($booking)
     return [
         'booking_id' => (int)$booking['booking_id'],
         'mission_id' => (int)$booking['mission_id'],
+        'booking_ref' => $booking['booking_ref'] ?? null,
         'patient_name' => $booking['patient_name'],
         'contact_number' => $booking['contact_number'],
         'organizer_name' => $booking['organizer_name'],
@@ -27,7 +28,7 @@ function format_booking($booking)
         'mission_date_long' => date('F j, Y', strtotime($booking['mission_date'])),
         'location' => $booking['location'],
         'available_slots' => (int)$booking['available_slots'],
-        'status' => 'Confirmed'
+        'status' => $booking['status'] ?? 'booked'
     ];
 }
 

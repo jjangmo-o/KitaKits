@@ -20,8 +20,8 @@
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="../index.php">Home (Missions)</a>
-                        <a href="my_bookings.php">My Bookings</a>
+                        <a href="../index.php">Opening Page</a>
+                        <a href="login.php">Log In</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
                         <a href="about_cataracts.php">About Cataracts</a>
@@ -171,7 +171,7 @@
                     <ul class="compact-list">
                         <li>Surgical removal of the cloudy lens</li>
                         <li>Replacement with an artificial intraocular lens (IOL)</li>
-                        <li>Quick procedure (15-20 minutes)</li>
+                        <li>Usually a brief procedure, with a longer visit for preparation and recovery checks</li>
                         <li>Most people experience improved vision after surgery</li>
                     </ul>
                 </div>

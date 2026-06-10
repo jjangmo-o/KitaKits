@@ -1,12 +1,15 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
+require_once(__DIR__ . '/../api/_auth.php');
+
+require_patient_page('login.php');
 
 // Get the mission ID from the URL
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // If no valid ID, redirect to homepage
 if ($mission_id === 0) {
-    header("Location: ../index.php");
+    header("Location: patient_portal.php");
     exit();
 }
 
@@ -18,7 +21,7 @@ $mission = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // If mission doesn't exist, go back home
 if (!$mission) {
-    header("Location: ../index.php");
+    header("Location: patient_portal.php");
     exit();
 }
 
@@ -27,10 +30,13 @@ $mission_date = strtotime($mission['mission_date']);
 $today = strtotime(date('Y-m-d'));
 $days_until = ceil(($mission_date - $today) / 86400);
 
-if ($days_until < 0) {
+if ($mission['mission_status'] === 'cancelled') {
+    $status = 'cancelled';
+    $status_text = 'Mission Cancelled';
+} elseif ($days_until < 0 || $mission['mission_status'] === 'completed') {
     $status = 'completed';
     $status_text = 'Mission Completed';
-} elseif ($mission['available_slots'] <= 0) {
+} elseif ($mission['available_slots'] <= 0 || $mission['mission_status'] === 'closed') {
     $status = 'full';
     $status_text = 'Full - No Slots Available';
 } else {
@@ -60,8 +66,7 @@ if ($days_until < 0) {
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="../index.php">Home (Missions)</a>
-                        <a href="my_bookings.php">My Bookings</a>
+                        <a href="patient_portal.php">Patient Portal</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
                         <a href="about_cataracts.php">About Cataracts</a>
@@ -72,15 +77,15 @@ if ($days_until < 0) {
     </header>
 
     <main class="container">
-        <a href="../index.php" class="btn-back">
+        <a href="patient_portal.php#portal-missions" class="btn-back">
             <span>←</span>
-            Back to Missions
+            Back to Portal Missions
         </a>
 
         <div class="mission-details-container">
             <div class="mission-details-header">
                 <div>
-                    <h1><?php echo htmlspecialchars($mission['organizer_name']); ?></h1>
+                    <h1><?php echo htmlspecialchars($mission['mission_name'] ?? $mission['organizer_name']); ?></h1>
                     <p class="mission-tagline">Free Cataract Surgery Mission</p>
                 </div>
                 <div class="status-badge status-<?php echo $status; ?>">
@@ -105,7 +110,7 @@ if ($days_until < 0) {
 
                 <div class="detail-box">
                     <h3>📍 Location</h3>
-                    <p class="detail-content"><?php echo htmlspecialchars($mission['location']); ?></p>
+                    <p class="detail-content"><?php echo htmlspecialchars($mission['full_address'] ?: $mission['location']); ?></p>
                     <p class="detail-hint">Please arrive 30 minutes early to complete registration</p>
                 </div>
 
@@ -133,6 +138,19 @@ if ($days_until < 0) {
                 </div>
             </div>
 
+            <?php if (!empty($mission['guidelines']) || !empty($mission['day_of_instructions'])): ?>
+                <div class="mission-info-section">
+                    <h2>Mission Guidelines</h2>
+                    <?php if (!empty($mission['guidelines'])): ?>
+                        <p><?php echo nl2br(htmlspecialchars($mission['guidelines'])); ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($mission['day_of_instructions'])): ?>
+                        <h3>Day-of Instructions</h3>
+                        <p><?php echo nl2br(htmlspecialchars($mission['day_of_instructions'])); ?></p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <div class="mission-info-section">
                 <h2>What to Expect</h2>
                 <div class="info-list">
@@ -154,7 +172,7 @@ if ($days_until < 0) {
                         <span class="info-icon">3️⃣</span>
                         <div>
                             <h4>Cataract Surgery</h4>
-                            <p>The surgery is typically quick (15-20 minutes per eye) and performed by experienced ophthalmologists under local anesthesia.</p>
+                            <p>The procedure is usually brief and performed under local anesthesia, but the full visit takes longer because of registration, screening, preparation, recovery, and discharge instructions.</p>
                         </div>
                     </div>
                     <div class="info-item">
@@ -180,10 +198,10 @@ if ($days_until < 0) {
             </div>
 
             <div class="mission-action">
-                <?php if ($mission['available_slots'] > 0): ?>
+                <?php if ($mission['available_slots'] > 0 && $mission['mission_status'] === 'open' && $mission['mission_date'] >= date('Y-m-d')): ?>
                     <a href="book_slot.php?id=<?php echo urlencode($mission['mission_id']); ?>" class="btn-book btn-large">
                         <span class="btn-icon">📋</span>
-                        Book This Mission Now
+                        Submit Booking Request
                     </a>
                 <?php else: ?>
                     <button class="btn-book btn-large disabled-action" disabled>

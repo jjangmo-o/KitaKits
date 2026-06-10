@@ -1,3 +1,21 @@
+<?php
+require_once(__DIR__ . '/../../app/config/db.php');
+
+$managed_content = [];
+
+try {
+    $content_stmt = $conn->prepare("SELECT page_key, title, body
+                                    FROM content_pages
+                                    WHERE status = 'published'
+                                      AND page_key IN ('faq_booking_policy', 'faq_health_privacy', 'health_advisory')
+                                    ORDER BY page_key ASC");
+    $content_stmt->execute();
+    $managed_content = $content_stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $managed_content = [];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,8 +38,8 @@
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="../index.php">Home (Missions)</a>
-                        <a href="my_bookings.php">My Bookings</a>
+                        <a href="../index.php">Opening Page</a>
+                        <a href="login.php">Log In</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
                         <a href="about_cataracts.php">About Cataracts</a>
@@ -46,6 +64,20 @@
                 <a class="source-button" href="https://www.who.int/en/news-room/fact-sheets/detail/blindness-and-visual-impairment" target="_blank" rel="noopener">WHO Vision Impairment</a>
             </div>
         </div>
+
+        <?php if ($managed_content): ?>
+            <section class="patient-resources">
+                <h2 class="centered-section-title">Current Admin Updates</h2>
+                <div class="content-advisory-grid">
+                    <?php foreach ($managed_content as $page): ?>
+                        <article class="content-advisory">
+                            <h3><?php echo htmlspecialchars($page['title']); ?></h3>
+                            <p><?php echo nl2br(htmlspecialchars($page['body'])); ?></p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
 
         <div class="faq-category">
             <h3>❓ About Cataract Missions</h3>
@@ -90,7 +122,7 @@
                     <span class="faq-toggle">▼</span>
                 </div>
                 <div class="faq-answer">
-                    <p>Simply browse the available missions on our homepage, select a mission that works for you, and click "Book Your Slot". You'll be asked to provide your name and contact number. Once submitted, your booking will be confirmed and you can check it later using your contact number on the "My Bookings" page.</p>
+                    <p>Log in to the Patient Portal, browse available missions, select a mission that works for you, and submit a booking request. The request starts as <strong>booked</strong>. Your slot is secured only when an admin changes the status to <strong>confirmed</strong>.</p>
                 </div>
             </div>
 
@@ -120,7 +152,7 @@
                     <span class="faq-toggle">▼</span>
                 </div>
                 <div class="faq-answer">
-                    <p>Visit the "My Bookings" page and enter the contact number you used when booking. All your bookings will be displayed with complete mission details, dates, locations, and confirmation status.</p>
+                    <p>Log in to the Patient Portal. Your dashboard shows booking status, pre-screening, and printable slips for confirmed bookings.</p>
                 </div>
             </div>
         </div>
@@ -195,7 +227,7 @@
                     <span class="faq-toggle">▼</span>
                 </div>
                 <div class="faq-answer">
-                    <p>No. The surgery is performed under local anesthesia, meaning the eye area is numbed. You'll feel pressure but no pain. You may hear surgical instruments and see light, but you won't experience any pain during the procedure. The medical team will explain everything and keep you calm throughout.</p>
+                    <p>Cataract surgery is commonly done with local anesthesia that numbs the eye area. You may feel pressure, see light, or hear instruments. Tell the medical team right away if you feel pain or unusual discomfort so they can respond.</p>
                 </div>
             </div>
 
@@ -290,7 +322,7 @@
                     <span class="faq-toggle">▼</span>
                 </div>
                 <div class="faq-answer">
-                    <p>Yes. All patient information is kept confidential and secure. Medical records are protected according to healthcare privacy laws. The mission organizers follow strict protocols to ensure your personal and health information remains private.</p>
+                    <p>The demo stores patient and intake details in the local database so coordinators can review bookings and health flags. A real deployment should add formal privacy notices, access controls, audit logs, and compliance review before collecting live patient data.</p>
                 </div>
             </div>
         </div>

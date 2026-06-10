@@ -12,14 +12,22 @@
         return;
     }
 
+    function statusClass(value) {
+        return `status-${String(value || 'booked').replace('_', '-')}`;
+    }
+
     function bookingCard(booking, contact) {
         const editUrl = `edit_booking.php?id=${encodeURIComponent(booking.booking_id)}&contact=${encodeURIComponent(contact)}`;
+        const intakeUrl = `pre_screening.php?id=${encodeURIComponent(booking.booking_id)}&contact=${encodeURIComponent(contact)}`;
+        const slipUrl = `booking_slip.php?id=${encodeURIComponent(booking.booking_id)}&contact=${encodeURIComponent(contact)}`;
+        const canPrint = booking.booking_status === 'confirmed';
+        const canCancel = !['cancelled', 'completed', 'no_show'].includes(booking.booking_status);
 
         return `
             <div class="booking-card">
                 <div class="booking-header">
-                    <h3>${escapeHtml(booking.organizer_name)}</h3>
-                    <span class="booking-id">ID: ${escapeHtml(booking.booking_id)}</span>
+                    <h3>${escapeHtml(booking.mission_name || booking.organizer_name)}</h3>
+                    <span class="booking-id">${escapeHtml(booking.booking_reference || `ID ${booking.booking_id}`)}</span>
                 </div>
 
                 <div class="booking-details">
@@ -32,32 +40,44 @@
                         <span class="detail-value">${escapeHtml(booking.mission_date_long)}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Location:</span>
-                        <span class="detail-value">${escapeHtml(booking.location)}</span>
+                        <span class="detail-label">Full Address:</span>
+                        <span class="detail-value">${escapeHtml(booking.full_address || booking.location)}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Contact Number:</span>
                         <span class="detail-value">${escapeHtml(booking.contact_number)}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value status-confirmed">${escapeHtml(booking.status)}</span>
+                        <span class="detail-label">Booking Status:</span>
+                        <span class="detail-value status-pill ${statusClass(booking.booking_status)}">${escapeHtml(booking.booking_status)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Headcount:</span>
+                        <span class="detail-value">${escapeHtml(booking.total_headcount)} total (${escapeHtml(booking.companion_count)} companion/s)</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Pre-screening:</span>
+                        <span class="detail-value">${escapeHtml(booking.intake_review_status)}</span>
                     </div>
                 </div>
 
                 <div class="booking-actions">
                     <a href="${editUrl}" class="btn-edit">Edit</a>
-                    <button
+                    <a href="${intakeUrl}" class="btn-secondary compact-button">Pre-screening</a>
+                    ${canPrint ? `<a href="${slipUrl}" class="btn-primary compact-button">Print Slip</a>` : `<a href="${slipUrl}" class="btn-secondary compact-button">View Slip Status</a>`}
+                    ${canCancel ? `<button
                         type="button"
                         class="btn-delete"
                         data-delete-booking
                         data-id="${escapeHtml(booking.booking_id)}"
                         data-contact="${escapeHtml(contact)}"
-                    >Delete</button>
+                    >Cancel</button>` : ''}
                 </div>
 
                 <p class="reminder">
-                    Reminder: Please arrive 30 minutes early on the mission date. Bring your ID and any medical documents.
+                    ${canPrint
+                        ? 'Your slot is secured. Bring your confirmation slip and valid ID on mission day.'
+                        : 'Booked means your request is received. The slot is secured only after admin confirmation.'}
                 </p>
             </div>
         `;
@@ -103,7 +123,7 @@
             return;
         }
 
-        if (!confirm('Cancel this booking? The slot will be returned to the mission.')) {
+        if (!confirm('Cancel this booking? If it was confirmed, the slot will be returned to the mission.')) {
             return;
         }
 

@@ -15,14 +15,14 @@ $booking_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $contact = isset($_GET['contact']) ? normalize_contact_number($_GET['contact']) : '';
 
 if ($booking_id <= 0 || $contact === '' || !contact_number_is_valid($contact)) {
-    header("Location: ../pages/my_bookings.php");
+    header("Location: ../pages/login.php");
     exit();
 }
 
 try {
     $conn->beginTransaction();
 
-    $select = $conn->prepare("SELECT booking_id, mission_id
+    $select = $conn->prepare("SELECT booking_id, mission_id, booking_status
                               FROM bookings
                               WHERE booking_id = :id AND contact_number = :contact
                               FOR UPDATE");
@@ -33,20 +33,17 @@ try {
     $booking = $select->fetch(PDO::FETCH_ASSOC);
 
     if ($booking) {
-        $delete = $conn->prepare("DELETE FROM bookings WHERE booking_id = :id AND contact_number = :contact");
-        $delete->execute([
+        $cancel = $conn->prepare("UPDATE bookings
+                                  SET booking_status = 'cancelled'
+                                  WHERE booking_id = :id AND contact_number = :contact");
+        $cancel->execute([
             ':id' => $booking_id,
             ':contact' => $contact
         ]);
-
-        $update = $conn->prepare("UPDATE missions
-                                  SET available_slots = available_slots + 1
-                                  WHERE mission_id = :mission_id");
-        $update->execute([':mission_id' => $booking['mission_id']]);
     }
 
     $conn->commit();
-    header("Location: ../pages/my_bookings.php?contact=" . urlencode($contact) . "&deleted=1");
+    header("Location: ../pages/patient_portal.php#portal-bookings");
     exit();
 
 } catch (PDOException $e) {
@@ -54,7 +51,7 @@ try {
         $conn->rollBack();
     }
 
-    header("Location: ../pages/my_bookings.php?contact=" . urlencode($contact));
+    header("Location: ../pages/patient_portal.php#portal-bookings");
     exit();
 }
 ?>

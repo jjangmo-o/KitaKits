@@ -6,6 +6,7 @@
     const loading = document.getElementById('bookingLoading');
     const submitButton = document.getElementById('bookingSubmit');
     const slotsValue = document.getElementById('remainingSlotsValue');
+    const successActions = document.getElementById('bookingSuccessActions');
 
     if (!form) {
         return;
@@ -15,6 +16,10 @@
         event.preventDefault();
 
         setStatus(status, '');
+        if (successActions) {
+            successActions.hidden = true;
+            successActions.innerHTML = '';
+        }
         setLoading(loading, true, 'Submitting booking...');
         submitButton.disabled = true;
 
@@ -25,6 +30,13 @@
             });
 
             setStatus(status, payload.message, 'success');
+
+            if (successActions) {
+                successActions.innerHTML = `
+                    <a href="patient_portal.php?requested=1#portal-bookings" class="btn-primary compact-button">Track in Patient Portal</a>
+                `;
+                successActions.hidden = false;
+            }
 
             if (slotsValue && payload.data.remaining_slots !== undefined) {
                 slotsValue.textContent = payload.data.remaining_slots;

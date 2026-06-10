@@ -1,10 +1,13 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/_response.php');
+require_once(__DIR__ . '/_auth.php');
 
 if (!in_array($_SERVER['REQUEST_METHOD'], ['DELETE', 'POST'], true)) {
     json_error('Method not allowed.', 405);
 }
+
+require_admin();
 
 $input = $_SERVER['REQUEST_METHOD'] === 'DELETE' ? $_GET : $_POST;
 $mission_id = isset($input['id']) ? (int)$input['id'] : 0;

@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+<?php
+require_once(__DIR__ . '/../../app/config/db.php');
+
+$managed_content = [];
+
+try {
+    $content_stmt = $conn->prepare("SELECT page_key, title, body
+                                    FROM content_pages
+                                    WHERE status = 'published'
+                                      AND page_key IN ('patient_guide_preparation', 'mission_guidelines', 'day_of_instructions')
+                                    ORDER BY page_key ASC");
+    $content_stmt->execute();
+    $managed_content = $content_stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $managed_content = [];
+}
+?>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,8 +38,8 @@
                 </div>
                 <div class="header-actions" aria-label="Primary navigation">
                     <nav class="header-nav">
-                        <a href="../index.php">Home (Missions)</a>
-                        <a href="my_bookings.php">My Bookings</a>
+                        <a href="../index.php">Opening Page</a>
+                        <a href="login.php">Log In</a>
                         <a href="patient_guide.php">Patient Guide</a>
                         <a href="faq.php">FAQ</a>
                         <a href="about_cataracts.php">About Cataracts</a>
@@ -47,6 +65,20 @@
             </div>
         </div>
 
+        <?php if ($managed_content): ?>
+            <section class="patient-resources">
+                <h2 class="centered-section-title">Current Admin Updates</h2>
+                <div class="content-advisory-grid">
+                    <?php foreach ($managed_content as $page): ?>
+                        <article class="content-advisory">
+                            <h3><?php echo htmlspecialchars($page['title']); ?></h3>
+                            <p><?php echo nl2br(htmlspecialchars($page['body'])); ?></p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
+
         <div class="guide-section">
             <h2>ðŸŽ¯ Getting Started</h2>
             <p>Welcome to Kitakits! This guide will help you understand the entire process from booking to recovery after your cataract surgery mission. Follow these steps to ensure a smooth and successful experience.</p>
@@ -61,8 +93,8 @@
                     <p>Click on a mission to view complete details including mission description, expectations, and what to bring.</p>
                 </div>
                 <div class="timeline-item">
-                    <h4>Step 3: Book Your Slot</h4>
-                    <p>When ready, click "Book a Slot" and provide your name and contact number. Your booking will be immediately confirmed.</p>
+                    <h4>Step 3: Submit a Booking Request</h4>
+                    <p>Log in to the Patient Portal, choose a mission, and submit your details. Your request starts as booked, and the slot is secured only after admin confirmation.</p>
                 </div>
                 <div class="timeline-item">
                     <h4>Step 4: Prepare for the Mission</h4>
@@ -108,7 +140,7 @@
 
             <h3>1-2 Weeks Before</h3>
             <ul class="checklist">
-                <li>Confirm your booking on the "My Bookings" page</li>
+                <li>Check your booking status in the Patient Portal</li>
                 <li>Note the exact date, time, and location</li>
                 <li>Inform your family/guardians about the mission</li>
                 <li>Arrange transportation and a companion</li>
@@ -179,11 +211,11 @@
 
             <h3>During Surgery</h3>
             <ul class="checklist">
-                <li>The surgeon will apply local anesthesia (you won't feel pain)</li>
+                <li>The surgeon will apply local anesthesia to numb the eye area</li>
                 <li>You may see light and hear surgical instruments</li>
                 <li>Keep your eye as still as possible</li>
                 <li>Follow the surgeon's instructions (e.g., "Look up," "Don't move")</li>
-                <li>Don't worryâ€”the procedure typically takes 15-20 minutes per eye</li>
+                <li>The procedure is usually brief, but the full visit takes longer because of registration, screening, preparation, recovery, and discharge instructions</li>
             </ul>
 
             <h3>After Surgery</h3>

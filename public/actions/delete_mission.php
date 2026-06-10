@@ -1,5 +1,8 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
+require_once(__DIR__ . '/../api/_auth.php');
+
+require_admin_page('../admin/login.php');
 
 // get mission ID from the URL. e.g. actions/delete_mission.php?id=3
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;

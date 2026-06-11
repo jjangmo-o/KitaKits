@@ -37,19 +37,19 @@ if (current_patient_id()) {
         <!-- Trust Indicators -->
         <section class="entry-assurance" aria-label="Why KitaKits">
             <div>
-                <span class="assurance-icon assurance-success">✓</span>
+                <span class="assurance-icon assurance-success"><img src="assets/icons/shield-check.svg" alt=""></span>
                 <strong>500+</strong>
                 <b>Successful Surgeries</b>
                 <span>Patients who regained their sight through our missions</span>
             </div>
             <div>
-                <span class="assurance-icon assurance-warning">◷</span>
+                <span class="assurance-icon assurance-warning"><img src="assets/icons/clock.svg" alt=""></span>
                 <strong>20-30 min</strong>
                 <b>Surgery Duration</b>
                 <span>Quick, safe outpatient procedure under local anesthesia</span>
             </div>
             <div>
-                <span class="assurance-icon assurance-info">♙</span>
+                <span class="assurance-icon assurance-info"><img src="assets/icons/users.svg" alt=""></span>
                 <strong>15+</strong>
                 <b>Partner Organizers</b>
                 <span>Certified ophthalmologists and medical institutions</span>
@@ -66,24 +66,28 @@ if (current_patient_id()) {
             </div>
             <div class="resource-grid">
                 <a href="pages/my_bookings.php" class="resource-card">
-                    <img src="assets/icons/bookings.png" alt="">
+                    <img src="assets/icons/calendar-days.svg" alt="">
                     <strong>My Bookings</strong>
                     <span>Retrieve and manage your booked surgery slots</span>
+                    <b>Learn more →</b>
                 </a>
                 <a href="pages/patient_guide.php" class="resource-card">
-                    <img src="assets/icons/guide.png" alt="">
+                    <img src="assets/icons/book-open.svg" alt="">
                     <strong>Patient Guide</strong>
                     <span>Before, during, and after surgery — what to expect</span>
+                    <b>Learn more →</b>
                 </a>
                 <a href="pages/faq.php" class="resource-card">
-                    <img src="assets/icons/faq.png" alt="">
+                    <img src="assets/icons/circle-help.svg" alt="">
                     <strong>FAQ</strong>
                     <span>Answers to the most common patient questions</span>
+                    <b>Learn more →</b>
                 </a>
                 <a href="pages/about_cataracts.php" class="resource-card">
-                    <img src="assets/icons/about.png" alt="">
+                    <img src="assets/icons/info.svg" alt="">
                     <strong>About Cataracts</strong>
                     <span>Learn about cataracts, symptoms, and treatment</span>
+                    <b>Learn more →</b>
                 </a>
             </div>
         </section>
@@ -92,22 +96,26 @@ if (current_patient_id()) {
             <div class="section-header">
                 <div>
                     <h2>Surgery Missions</h2>
-                    <p>Find available missions, compare slots, and reserve your surgery schedule.</p>
+                    <p id="missionsCount">Loading available missions...</p>
                 </div>
             </div>
 
             <form id="missionFilters" class="mission-filters" data-api-url="api/missions.php" data-page-prefix="pages/" data-asset-prefix="assets/">
-                <input type="search" name="q" placeholder="Search by organizer, location, or date...">
-                <select name="status" aria-label="Mission status">
-                    <option value="available">Open</option>
-                    <option value="all">All</option>
-                    <option value="full">Full</option>
-                </select>
-                <select name="sort" aria-label="Sort missions">
-                    <option value="date">Date</option>
-                    <option value="slots">Slots</option>
-                </select>
-                <button type="submit">Search</button>
+                <label class="mission-search-control">
+                    <img src="assets/icons/search.svg" alt="">
+                    <input type="search" name="q" placeholder="Search by organizer, location, or date...">
+                </label>
+                <button class="mission-filter-icon" type="button" aria-label="Filter missions">
+                    <img src="assets/icons/filter.svg" alt="">
+                </button>
+                <input type="hidden" name="status" value="available">
+                <input type="hidden" name="sort" value="date">
+                <div class="mission-status-tabs" role="tablist" aria-label="Mission status">
+                    <button class="mission-status-tab is-active" type="button" data-status="available">Open</button>
+                    <button class="mission-status-tab" type="button" data-status="all">All</button>
+                    <button class="mission-status-tab" type="button" data-status="full">Full</button>
+                    <button class="mission-status-tab" type="button" data-status="completed">Completed</button>
+                </div>
             </form>
 
             <div id="missionsStatus" class="status-message" role="status" hidden></div>

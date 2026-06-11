@@ -6,6 +6,14 @@ require_method('GET');
 
 function format_mission($mission)
 {
+    $time_range = null;
+
+    if (!empty($mission['start_time']) && !empty($mission['end_time'])) {
+        $time_range = date('g:i A', strtotime($mission['start_time'])) . ' – ' . date('g:i A', strtotime($mission['end_time']));
+    } elseif (!empty($mission['start_time'])) {
+        $time_range = date('g:i A', strtotime($mission['start_time']));
+    }
+
     return [
         'mission_id' => (int)$mission['mission_id'],
         'mission_name' => $mission['mission_name'],
@@ -13,6 +21,8 @@ function format_mission($mission)
         'mission_date' => $mission['mission_date'],
         'mission_date_long' => date('F j, Y', strtotime($mission['mission_date'])),
         'mission_date_short' => date('M d, Y', strtotime($mission['mission_date'])),
+        'mission_time_range' => $time_range,
+        'venue_name' => $mission['venue_name'],
         'location' => $mission['location'],
         'city_area' => $mission['city_area'],
         'full_address' => $mission['full_address'],
@@ -30,8 +40,7 @@ try {
     $city = isset($_GET['city']) ? trim($_GET['city']) : '';
 
     $where = [
-        "mission_date >= CURDATE()",
-        "mission_status IN ('open', 'closed')"
+        "mission_status IN ('open', 'closed', 'completed')"
     ];
     $params = [];
 
@@ -43,6 +52,12 @@ try {
     if ($city !== '') {
         $where[] = "(city_area LIKE :city OR location LIKE :city OR full_address LIKE :city)";
         $params[':city'] = '%' . $city . '%';
+    }
+
+    if ($status === 'completed') {
+        $where[] = "(mission_status = 'completed' OR mission_date < CURDATE())";
+    } else {
+        $where[] = "mission_date >= CURDATE()";
     }
 
     if ($status === 'available') {
@@ -69,9 +84,14 @@ try {
         return $mission['available_slots'] <= 0 || $mission['mission_status'] === 'closed';
     }));
 
+    $completed = array_values(array_filter($missions, function ($mission) {
+        return $mission['mission_status'] === 'completed' || strtotime($mission['mission_date']) < strtotime(date('Y-m-d'));
+    }));
+
     json_success('Missions loaded.', [
         'available' => $available,
         'fully_booked' => $fully_booked,
+        'completed' => $completed,
         'all' => $missions
     ]);
 } catch (PDOException $e) {

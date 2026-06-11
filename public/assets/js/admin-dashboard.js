@@ -21,7 +21,19 @@
 
     function statusPill(value) {
         const normalized = String(value || '').replace('_', '-');
-        return `<span class="status-pill status-${escapeHtml(normalized)}">${escapeHtml(value || 'unknown')}</span>`;
+        const labels = {
+            open: 'Accepting Bookings',
+            closed: 'Fully Booked',
+            completed: 'Completed',
+            cancelled: 'Cancelled',
+            draft: 'Draft',
+            booked: 'Booked',
+            confirmed: 'Confirmed',
+            pending: 'Pending',
+            rejected: 'Rejected',
+            no_show: 'No-show'
+        };
+        return `<span class="status-pill status-${escapeHtml(normalized)}">${escapeHtml(labels[value] || value || 'unknown')}</span>`;
     }
 
     function adminUrl(path) {

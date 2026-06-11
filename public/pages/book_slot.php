@@ -14,8 +14,21 @@ function contact_number_is_valid($contact)
     return preg_match('/^\+?[0-9]{7,15}$/', $contact) === 1;
 }
 
+function kk_booking_time_range($mission)
+{
+    if (!empty($mission['start_time']) && !empty($mission['end_time'])) {
+        return date('g:i A', strtotime($mission['start_time'])) . ' - ' . date('g:i A', strtotime($mission['end_time']));
+    }
+
+    if (!empty($mission['start_time'])) {
+        return date('g:i A', strtotime($mission['start_time']));
+    }
+
+    return 'Time to be announced';
+}
+
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$current_patient_id = require_patient_page('login.php');
+$current_patient_id = current_patient_id();
 $current_profile = null;
 
 if ($current_patient_id) {
@@ -162,6 +175,20 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
+<?php
+$patient_name_value = $_POST['patient_name'] ?? trim(implode(' ', array_filter([
+    $current_profile['first_name'] ?? '',
+    $current_profile['middle_name'] ?? '',
+    $current_profile['last_name'] ?? '',
+    $current_profile['suffix'] ?? ''
+])));
+$selected_sex = $_POST['sex'] ?? ($current_profile['sex'] ?? '');
+$date_label = date('F j, Y', strtotime($mission['mission_date']));
+$time_label = kk_booking_time_range($mission);
+$location_label = $mission['full_address'] ?: $mission['location'];
+$is_bookable = (int)$mission['available_slots'] > 0 && $mission['mission_date'] >= date('Y-m-d') && $mission['mission_status'] === 'open';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -171,184 +198,199 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body>
-    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
-    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Book Slot']]); ?>
+<body class="make-ui page-book-slot">
+    <?php kk_render_header(['section' => 'pages', 'active' => '']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Book Slot', 'href' => '../index.php#missions'], ['label' => 'm' . $mission_id]]); ?>
 
-    <main class="container">
-        <a href="patient_portal.php#portal-missions" class="btn-back">
-            <span>&larr; </span>
-            Back to Portal Missions
+    <main class="container mission-flow-page">
+        <a href="../index.php#missions" class="btn-back">
+            <span>&larr;</span>
+            Back to Available Missions
         </a>
 
+        <section class="booking-page-heading">
+            <h1>Book a Slot</h1>
+            <p>Complete both steps to reserve your surgery slot.</p>
+        </section>
+
+        <nav class="booking-stepper" aria-label="Booking progress">
+            <span class="is-active" data-step-indicator="1"><b>1</b> Your Info</span>
+            <i></i>
+            <span data-step-indicator="2"><b>2</b> Medical Intake</span>
+        </nav>
+
         <?php if ($error): ?>
-            <div class="alert alert-error">Warning: <?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
-
-        <?php if ($current_profile): ?>
-            <div class="alert alert-success">You are booking as <?php echo htmlspecialchars(trim(($current_profile['first_name'] ?? '') . ' ' . ($current_profile['last_name'] ?? ''))); ?>. This request will appear in your patient dashboard.</div>
-        <?php else: ?>
-            <div class="alert alert-info">Already have an account? <a href="login.php">Log in</a> first so this booking appears in your patient dashboard.</div>
-        <?php endif; ?>
-
-        <div class="booking-summary">
-            <strong>Mission Details:</strong><br><br>
-            <strong>Mission:</strong> <?php echo htmlspecialchars($mission['mission_name'] ?? $mission['organizer_name']); ?><br>
-            <strong>Organizer:</strong> <?php echo htmlspecialchars($mission['organizer_name']); ?><br>
-            <strong>Date:</strong> <?php echo date('F j, Y', strtotime($mission['mission_date'])); ?><br>
-            <strong>Location:</strong> <?php echo htmlspecialchars($mission['full_address'] ?: $mission['location']); ?><br>
-            <strong>Remaining Slots:</strong> <span id="remainingSlotsValue" class="slot-count"><?php echo htmlspecialchars($mission['available_slots']); ?></span>
-        </div>
 
         <div id="bookingStatus" class="status-message" role="status" hidden></div>
         <div id="bookingSuccessActions" class="booking-actions success-actions" hidden></div>
         <div id="bookingLoading" class="loading-state" role="status" aria-live="polite" hidden></div>
         <div id="bookingClosedMessage" class="alert alert-error" hidden></div>
 
-        <?php if ((int)$mission['available_slots'] > 0 && $mission['mission_date'] >= date('Y-m-d')): ?>
-            <form method="POST" action="" id="bookingForm">
-                <input type="hidden" name="mission_id" value="<?php echo htmlspecialchars($mission_id); ?>">
-                <label for="patient_name">Full Name *</label>
-                <input
-                    type="text"
-                    id="patient_name"
-                    name="patient_name"
-                    value="<?php echo htmlspecialchars($_POST['patient_name'] ?? trim(implode(' ', array_filter([
-                        $current_profile['first_name'] ?? '',
-                        $current_profile['middle_name'] ?? '',
-                        $current_profile['last_name'] ?? '',
-                        $current_profile['suffix'] ?? ''
-                    ])))); ?>"
-                    placeholder="Enter your full name"
-                    maxlength="120"
-                    required
-                    aria-label="Patient full name"
-                >
+        <section class="book-slot-layout">
+            <div class="booking-form-card">
+                <?php if ($is_bookable): ?>
+                    <form method="POST" action="" id="bookingForm">
+                        <input type="hidden" name="mission_id" value="<?php echo htmlspecialchars($mission_id); ?>">
 
-                <label for="contact_number">Contact Number *</label>
-                <input
-                    type="text"
-                    id="contact_number"
-                    name="contact_number"
-                    value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ($current_profile['contact_number'] ?? '')); ?>"
-                    placeholder="e.g., 09123456789"
-                    pattern="[\+0-9\s\-\(\)]{7,20}"
-                    required
-                    aria-label="Patient contact number"
-                >
+                        <div class="booking-step-panel" data-step-panel="1">
+                            <h2>Your Information</h2>
+                            <p>Enter the name and contact number you'll use to retrieve this booking.</p>
 
-                <label for="email">Email Address</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value="<?php echo htmlspecialchars($_POST['email'] ?? ($current_profile['email'] ?? '')); ?>"
-                    placeholder="Optional"
-                    maxlength="150"
-                >
+                            <label for="patient_name">Full Name <span>*</span></label>
+                            <input
+                                type="text"
+                                id="patient_name"
+                                name="patient_name"
+                                value="<?php echo htmlspecialchars($patient_name_value); ?>"
+                                placeholder="e.g. Maria Santos"
+                                maxlength="120"
+                                required
+                            >
 
-                <div class="form-grid">
-                    <div>
-                        <label for="birthdate">Birthdate</label>
-                        <input
-                            type="date"
-                            id="birthdate"
-                            name="birthdate"
-                            value="<?php echo htmlspecialchars($_POST['birthdate'] ?? ($current_profile['birthdate'] ?? '')); ?>"
-                        >
+                            <label for="contact_number">Mobile Number <span>*</span></label>
+                            <input
+                                type="text"
+                                id="contact_number"
+                                name="contact_number"
+                                value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ($current_profile['contact_number'] ?? '')); ?>"
+                                placeholder="e.g. 09171234567"
+                                pattern="[\+0-9\s\-\(\)]{7,20}"
+                                required
+                            >
+                            <small>Save this number - it's required to look up your booking.</small>
+
+                            <label for="email">Email Address <span>*</span></label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value="<?php echo htmlspecialchars($_POST['email'] ?? ($current_profile['email'] ?? '')); ?>"
+                                placeholder="optional"
+                                maxlength="150"
+                            >
+
+                            <button type="button" class="btn-primary booking-next-step" data-next-step="2">
+                                Continue to Medical Intake
+                                <span>&rsaquo;</span>
+                            </button>
+                        </div>
+
+                        <div class="booking-step-panel" data-step-panel="2" hidden>
+                            <h2>Medical Intake</h2>
+                            <p>Add the extra details coordinators use for screening and day-of support.</p>
+
+                            <div class="form-grid">
+                                <div>
+                                    <label for="birthdate">Birthdate</label>
+                                    <input
+                                        type="date"
+                                        id="birthdate"
+                                        name="birthdate"
+                                        value="<?php echo htmlspecialchars($_POST['birthdate'] ?? ($current_profile['birthdate'] ?? '')); ?>"
+                                    >
+                                </div>
+                                <div>
+                                    <label for="sex">Sex</label>
+                                    <select id="sex" name="sex">
+                                        <option value="">Prefer not to say</option>
+                                        <option value="Male" <?php echo $selected_sex === 'Male' ? 'selected' : ''; ?>>Male</option>
+                                        <option value="Female" <?php echo $selected_sex === 'Female' ? 'selected' : ''; ?>>Female</option>
+                                        <option value="Other" <?php echo $selected_sex === 'Other' ? 'selected' : ''; ?>>Other</option>
+                                        <option value="Prefer not to say" <?php echo $selected_sex === 'Prefer not to say' ? 'selected' : ''; ?>>Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <label for="full_address">Patient Address</label>
+                            <input
+                                type="text"
+                                id="full_address"
+                                name="full_address"
+                                value="<?php echo htmlspecialchars($_POST['full_address'] ?? ($current_profile['full_address'] ?? '')); ?>"
+                                placeholder="House no., street, barangay, city"
+                                maxlength="255"
+                            >
+
+                            <div class="form-grid form-grid-3">
+                                <div>
+                                    <label for="barangay">Barangay</label>
+                                    <input type="text" id="barangay" name="barangay" value="<?php echo htmlspecialchars($_POST['barangay'] ?? ($current_profile['barangay'] ?? '')); ?>" maxlength="100">
+                                </div>
+                                <div>
+                                    <label for="city">City / Area</label>
+                                    <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($_POST['city'] ?? ($current_profile['city'] ?? '')); ?>" maxlength="100">
+                                </div>
+                                <div>
+                                    <label for="province">Province</label>
+                                    <input type="text" id="province" name="province" value="<?php echo htmlspecialchars($_POST['province'] ?? ($current_profile['province'] ?? '')); ?>" maxlength="100">
+                                </div>
+                            </div>
+
+                            <label for="companion_count">Companion Count</label>
+                            <input
+                                type="number"
+                                id="companion_count"
+                                name="companion_count"
+                                value="<?php echo isset($_POST['companion_count']) ? htmlspecialchars($_POST['companion_count']) : '0'; ?>"
+                                min="0"
+                                max="10"
+                            >
+
+                            <label for="patient_notes">Notes for Coordinator</label>
+                            <textarea
+                                id="patient_notes"
+                                name="patient_notes"
+                                rows="3"
+                                placeholder="Optional accessibility, schedule, or companion notes"
+                            ><?php echo isset($_POST['patient_notes']) ? htmlspecialchars($_POST['patient_notes']) : ''; ?></textarea>
+
+                            <div class="booking-step-actions">
+                                <button type="button" class="btn-secondary compact-button" data-prev-step="1">Back</button>
+                                <button type="submit" name="submit" id="bookingSubmit" class="btn-primary">Submit Booking Request</button>
+                            </div>
+                        </div>
+                    </form>
+                <?php else: ?>
+                    <div class="make-empty-state">
+                        <strong>This mission is not accepting bookings.</strong>
+                        <span>Please choose another available mission.</span>
                     </div>
-                    <div>
-                        <label for="sex">Sex</label>
-                        <select id="sex" name="sex">
-                            <?php $selected_sex = $_POST['sex'] ?? ($current_profile['sex'] ?? ''); ?>
-                            <option value="">Prefer not to say</option>
-                            <option value="Male" <?php echo $selected_sex === 'Male' ? 'selected' : ''; ?>>Male</option>
-                            <option value="Female" <?php echo $selected_sex === 'Female' ? 'selected' : ''; ?>>Female</option>
-                            <option value="Other" <?php echo $selected_sex === 'Other' ? 'selected' : ''; ?>>Other</option>
-                            <option value="Prefer not to say" <?php echo $selected_sex === 'Prefer not to say' ? 'selected' : ''; ?>>Prefer not to say</option>
-                        </select>
-                    </div>
-                </div>
+                <?php endif; ?>
+            </div>
 
-                <label for="full_address">Patient Address</label>
-                <input
-                    type="text"
-                    id="full_address"
-                    name="full_address"
-                    value="<?php echo htmlspecialchars($_POST['full_address'] ?? ($current_profile['full_address'] ?? '')); ?>"
-                    placeholder="House no., street, barangay, city"
-                    maxlength="255"
-                >
+            <aside class="book-slot-sidebar" aria-label="Mission booking details">
+                <section class="mission-summary-card">
+                    <h2>Mission Summary</h2>
+                    <dl>
+                        <dt>Organizer</dt>
+                        <dd><?php echo htmlspecialchars($mission['organizer_name']); ?></dd>
+                        <dt>Date</dt>
+                        <dd><?php echo htmlspecialchars($date_label); ?></dd>
+                        <dt>Time</dt>
+                        <dd><?php echo htmlspecialchars($time_label); ?></dd>
+                        <dt>Location</dt>
+                        <dd><?php echo htmlspecialchars($location_label); ?></dd>
+                        <dt>Slots Remaining</dt>
+                        <dd><span id="remainingSlotsValue"><?php echo htmlspecialchars($mission['available_slots']); ?></span> of <?php echo htmlspecialchars($mission['total_slots']); ?></dd>
+                    </dl>
+                </section>
 
-                <div class="form-grid form-grid-3">
-                    <div>
-                        <label for="barangay">Barangay</label>
-                        <input
-                            type="text"
-                            id="barangay"
-                            name="barangay"
-                            value="<?php echo htmlspecialchars($_POST['barangay'] ?? ($current_profile['barangay'] ?? '')); ?>"
-                            maxlength="100"
-                        >
-                    </div>
-                    <div>
-                        <label for="city">City / Area</label>
-                        <input
-                            type="text"
-                            id="city"
-                            name="city"
-                            value="<?php echo htmlspecialchars($_POST['city'] ?? ($current_profile['city'] ?? '')); ?>"
-                            maxlength="100"
-                        >
-                    </div>
-                    <div>
-                        <label for="province">Province</label>
-                        <input
-                            type="text"
-                            id="province"
-                            name="province"
-                            value="<?php echo htmlspecialchars($_POST['province'] ?? ($current_profile['province'] ?? '')); ?>"
-                            maxlength="100"
-                        >
-                    </div>
-                </div>
-
-                <label for="companion_count">Companion Count</label>
-                <input
-                    type="number"
-                    id="companion_count"
-                    name="companion_count"
-                    value="<?php echo isset($_POST['companion_count']) ? htmlspecialchars($_POST['companion_count']) : '0'; ?>"
-                    min="0"
-                    max="10"
-                >
-
-                <label for="patient_notes">Notes for Coordinator</label>
-                <textarea
-                    id="patient_notes"
-                    name="patient_notes"
-                    rows="3"
-                    placeholder="Optional accessibility, schedule, or companion notes"
-                ><?php echo isset($_POST['patient_notes']) ? htmlspecialchars($_POST['patient_notes']) : ''; ?></textarea>
-
-                <button type="submit" name="submit" id="bookingSubmit">Submit Booking Request</button>
-            </form>
-        <?php else: ?>
-            <div class="alert alert-error">This mission is not accepting bookings.</div>
-        <?php endif; ?>
-
-        <div class="important-info">
-            <h3>Important Information</h3>
-            <ul>
-                <li>Your booking starts as <strong>booked</strong> and must be confirmed by an admin before the slot is secured</li>
-                <li>Your patient profile is linked to this booking for coordinator cross-checking</li>
-                <li>Please arrive 30 minutes early on the mission date</li>
-                <li>Bring your ID and any relevant medical documents</li>
-                <li>Complete the pre-screening form from your Patient Portal before mission day</li>
-                <li>If you cannot attend, please notify the organizer as soon as possible</li>
-            </ul>
-        </div>
+                <section class="booking-reminders-card">
+                    <h2>Important Reminders</h2>
+                    <ul class="figma-check-list">
+                        <li>Save your contact number - needed to retrieve your booking</li>
+                        <li>Fast 6-8 hours before your surgery time</li>
+                        <li>Bring a companion aged 18 or older</li>
+                        <li>Wear comfortable, loose clothing</li>
+                        <li>Arrive at least 30 minutes early</li>
+                    </ul>
+                </section>
+            </aside>
+        </section>
     </main>
+
     <?php kk_render_footer('pages'); ?>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/book-slot.js"></script>

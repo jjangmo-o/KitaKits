@@ -7,10 +7,40 @@
     const submitButton = document.getElementById('bookingSubmit');
     const slotsValue = document.getElementById('remainingSlotsValue');
     const successActions = document.getElementById('bookingSuccessActions');
+    const panels = Array.from(document.querySelectorAll('[data-step-panel]'));
+    const indicators = Array.from(document.querySelectorAll('[data-step-indicator]'));
+    const nextButtons = Array.from(document.querySelectorAll('[data-next-step]'));
+    const prevButtons = Array.from(document.querySelectorAll('[data-prev-step]'));
 
     if (!form) {
         return;
     }
+
+    function showStep(step) {
+        panels.forEach((panel) => {
+            panel.hidden = panel.dataset.stepPanel !== String(step);
+        });
+
+        indicators.forEach((indicator) => {
+            indicator.classList.toggle('is-active', indicator.dataset.stepIndicator === String(step));
+        });
+    }
+
+    nextButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            if (!form.reportValidity()) {
+                return;
+            }
+
+            showStep(button.dataset.nextStep || '2');
+        });
+    });
+
+    prevButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            showStep(button.dataset.prevStep || '1');
+        });
+    });
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -43,6 +73,7 @@
             }
 
             form.reset();
+            showStep('1');
 
             if (payload.data.remaining_slots <= 0) {
                 form.hidden = true;

@@ -35,7 +35,7 @@ require_once(__DIR__ . '/../includes/layout.php');
                                 type="text"
                                 id="contact"
                                 name="contact"
-                                placeholder="e.g., 09123456789"
+                                placeholder="e.g. 09171234567"
                                 pattern="[\+0-9\s\-\(\)]{7,20}"
                                 autocomplete="tel"
                                 required

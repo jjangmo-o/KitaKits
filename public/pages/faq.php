@@ -39,8 +39,8 @@ try {
                 <p>Clear answers to the most common questions about cataract surgery missions.</p>
             </div>
             <div class="faq-intro-actions" aria-label="Related resources">
-                <a href="patient_guide.php">Patient Guide</a>
-                <a href="about_cataracts.php">About Cataracts</a>
+                <a href="patient_guide.php"><img src="../assets/icons/book-open.svg" alt="">Patient Guide</a>
+                <a href="about_cataracts.php"><img src="../assets/icons/info.svg" alt="">About Cataracts</a>
             </div>
         </section>
 

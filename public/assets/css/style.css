@@ -7097,6 +7097,22 @@ button.btn-secondary {
   width: 44px;
 }
 
+.assurance-icon img {
+  display: block;
+  height: 22px;
+  margin: 0;
+  width: 22px;
+}
+
+.resource-card img {
+  box-sizing: border-box;
+  display: block;
+  height: 42px;
+  margin: 0 0 6px;
+  object-fit: contain;
+  width: 42px;
+}
+
 .assurance-success {
   background: #d1fae5;
   color: #059669;
@@ -8002,6 +8018,7 @@ main.container > .btn-back + .section-header p {
 
 .page-my-bookings main.container {
   display: block;
+  margin-top: -10px;
   padding-bottom: 0;
   padding-top: 0;
 }
@@ -8061,6 +8078,7 @@ body.page-my-bookings {
 
 .page-patient-guide .figma-page-intro {
   margin-bottom: 24px;
+  margin-top: -10px;
 }
 
 .page-patient-guide .guide-journey {
@@ -8087,6 +8105,7 @@ body.page-my-bookings {
 
 .page-faq main.container {
   display: block;
+  margin-top: -20px;
 }
 
 .page-faq .faq-intro {
@@ -8110,9 +8129,35 @@ body.page-my-bookings {
   display: inline-flex;
   font-size: 13px;
   font-weight: 700;
+  gap: 8px;
   min-height: 34px;
   padding: 7px 16px;
   text-decoration: none;
+}
+
+.faq-intro-actions img {
+  display: block;
+  height: 15px;
+  width: 15px;
+}
+
+.page-faq .faq-toggle {
+  color: transparent;
+  font-size: 0;
+  position: relative;
+}
+
+.page-faq .faq-toggle::before {
+  border-bottom: 1.7px solid var(--figma-primary);
+  border-right: 1.7px solid var(--figma-primary);
+  content: "";
+  display: block;
+  height: 7px;
+  left: 50%;
+  position: absolute;
+  top: 45%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 7px;
 }
 
 .page-faq .faq-category {
@@ -8199,11 +8244,14 @@ body.page-my-bookings {
 .page-about-cataracts .info-section:first-of-type::before {
   align-items: center;
   background: var(--figma-primary-wash);
+  background-image: url("../icons/eye-purple.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
   border-radius: 16px;
   color: var(--figma-primary);
-  content: "⊙";
+  content: "";
   display: inline-flex;
-  font-size: 28px;
   height: 56px;
   justify-content: center;
   width: 56px;
@@ -8260,6 +8308,80 @@ body.page-my-bookings {
   padding: 0;
 }
 
+.about-risk-section {
+  margin-top: 42px;
+}
+
+.about-risk-section > h2 {
+  color: var(--figma-text);
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 24px;
+}
+
+.about-risk-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.about-risk-grid article {
+  background: #ffffff;
+  border: 1px solid var(--figma-border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.about-risk-grid .risk-reduce-card {
+  background: #f6f3ff;
+  border-color: #c4b5fd;
+}
+
+.about-risk-grid h3 {
+  color: var(--figma-text);
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 18px;
+}
+
+.about-risk-grid .risk-factor-list {
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about-risk-grid .risk-factor-list li {
+  color: var(--figma-text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+  padding-left: 24px;
+  position: relative;
+}
+
+.about-risk-grid .risk-factor-list li::before {
+  color: var(--figma-primary);
+  content: "✓";
+  font-weight: 700;
+  left: 0;
+  position: absolute;
+}
+
+.about-risk-grid p {
+  color: var(--figma-text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 18px 0 0;
+}
+
+@media (max-width: 760px) {
+  .about-risk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .page-booking-confirmation .slip-container {
   display: block;
   max-width: 720px;
@@ -8299,9 +8421,17 @@ body.page-my-bookings {
 }
 
 .page-booking-confirmation .slip-header img {
-  filter: brightness(0) invert(1);
+  filter: none;
   height: 24px;
   width: 24px;
+}
+
+.page-booking-confirmation .slip-reference {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: #ffffff;
+  padding: 0;
 }
 
 .page-booking-confirmation .slip-header h1 {
@@ -8378,6 +8508,12 @@ body.page-my-bookings {
   padding: 0 0 28px;
 }
 
+.page-booking-confirmation .slip-grid > div {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+
 .page-booking-confirmation .slip-grid span {
   color: var(--figma-text-faint);
   display: block;
@@ -8440,4 +8576,889 @@ body.page-my-bookings {
   .auth-page-main {
     padding-top: 32px;
   }
+}
+
+/* Home page Figma mission browser correction */
+.entry-body .entry-shell {
+  gap: 48px;
+}
+
+.entry-body .entry-resources {
+  margin-bottom: 0;
+}
+
+.entry-body .entry-resources + .missions-browser {
+  margin-top: 0;
+}
+
+.resource-card b {
+  color: var(--figma-primary);
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: auto;
+}
+
+.missions-browser .section-header {
+  border-bottom: 0;
+  margin: 0 0 24px;
+  padding: 0;
+}
+
+.missions-browser .mission-filters {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  max-width: none;
+  padding: 0;
+  width: 100%;
+}
+
+.mission-search-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+}
+
+.mission-search-control > img {
+  height: 18px;
+  left: 14px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  z-index: 1;
+}
+
+.mission-search-control input[type="search"] {
+  background: #ffffff;
+  border: 1px solid var(--figma-border);
+  border-radius: 10px;
+  color: var(--figma-text);
+  font-size: 14px;
+  height: 44px;
+  padding: 10px 14px 10px 40px;
+  width: 100%;
+}
+
+.mission-filter-icon {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: #8b95aa !important;
+  flex: 0 0 20px;
+  height: 44px;
+  min-height: 44px !important;
+  padding: 0 !important;
+  width: 20px !important;
+}
+
+.mission-filter-icon img {
+  display: block;
+  height: 18px;
+  width: 18px;
+}
+
+.mission-status-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.mission-status-tab {
+  background: #ffffff !important;
+  border: 1px solid var(--figma-border) !important;
+  border-radius: 10px !important;
+  color: var(--figma-text) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  min-height: 44px !important;
+  padding: 0 16px !important;
+}
+
+.mission-status-tab.is-active {
+  background: var(--figma-primary) !important;
+  border-color: var(--figma-primary) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.missions-browser .mission-grid {
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0;
+}
+
+.missions-browser .mission-card {
+  border-radius: 10px;
+  box-shadow: none;
+  gap: 18px;
+  min-height: 286px;
+  padding: 26px 24px 24px;
+  transform: none;
+}
+
+.missions-browser .mission-card:hover {
+  border-color: var(--figma-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.missions-browser .mission-card-head {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.missions-browser .mission-card h3 {
+  color: var(--figma-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 6px;
+}
+
+.missions-browser .mission-organizer {
+  color: var(--figma-text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.missions-browser .mission-card .status-badge {
+  background: #dcfce7;
+  color: #15803d;
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+}
+
+.missions-browser .mission-card .status-badge::before {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  display: inline-block;
+  height: 7px;
+  width: 7px;
+}
+
+.missions-browser .mission-card .status-full {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.missions-browser .mission-card .status-completed {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.mission-meta-list {
+  display: grid;
+  gap: 10px;
+}
+
+.missions-browser .mission-date,
+.missions-browser .mission-location {
+  align-items: center;
+  color: #374151;
+  display: flex;
+  font-size: 14px;
+  gap: 10px;
+  line-height: 1.35;
+}
+
+.missions-browser .mission-date::before,
+.missions-browser .mission-location::before {
+  content: none;
+}
+
+.missions-browser .mission-date img,
+.missions-browser .mission-location img {
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.mission-slot-summary {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.mission-slot-summary span {
+  color: var(--figma-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mission-slot-summary strong {
+  color: var(--figma-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.missions-browser .slot-meter {
+  background: #e9e7f0;
+  border-radius: 999px;
+  height: 7px;
+  overflow: hidden;
+}
+
+.missions-browser .slot-meter span {
+  background: var(--figma-primary);
+}
+
+.missions-browser .mission-card-actions {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.missions-browser .mission-card-actions .compact-button,
+.missions-browser .mission-card-actions .btn-book {
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 40px;
+  padding: 9px 18px;
+  width: 100%;
+}
+
+.missions-browser .mission-card-actions .btn-book:only-child,
+.missions-browser .mission-card-actions .compact-button:only-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .mission-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mission-filter-icon {
+    display: none;
+  }
+
+  .mission-status-tabs {
+    flex-wrap: wrap;
+  }
+
+  .mission-status-tab {
+    flex: 1 1 auto;
+  }
+
+  .missions-browser .mission-grid,
+  .missions-browser .mission-card-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mission detail and booking flow */
+.mission-flow-page {
+  display: block;
+  padding-bottom: 72px;
+  padding-top: 44px;
+}
+
+.mission-flow-page > .btn-back {
+  margin: 0 0 24px !important;
+  min-height: auto;
+}
+
+.mission-flow-page > .btn-back::before {
+  content: none;
+}
+
+.mission-figma-hero,
+.mission-stat-card,
+.mission-figma-card,
+.mission-location-card,
+.mission-ready-card,
+.mission-help-card,
+.booking-stepper,
+.booking-form-card,
+.mission-summary-card,
+.booking-reminders-card {
+  background: #ffffff;
+  border: 1px solid var(--figma-border);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.mission-figma-hero {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  min-height: 112px;
+  padding: 24px;
+}
+
+.page-mission-details .mission-figma-hero {
+  margin-bottom: 0;
+  margin-top: -26px;
+}
+
+.page-mission-details .mission-stat-grid {
+  margin-bottom: 0;
+}
+
+.mission-figma-hero h1 {
+  color: var(--figma-text);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 10px;
+}
+
+.mission-figma-hero p,
+.booking-page-heading p {
+  color: var(--figma-text-muted);
+  font-size: 15px;
+  margin: 0;
+}
+
+.mission-figma-hero .status-badge {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+}
+
+.mission-figma-hero .status-badge::before {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  display: inline-block;
+  height: 7px;
+  width: 7px;
+}
+
+.mission-stat-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 24px;
+}
+
+.mission-stat-card {
+  min-height: 150px;
+  padding: 20px;
+}
+
+.mission-stat-icon {
+  align-items: center;
+  background: #ede9fe;
+  border-radius: 8px;
+  display: inline-flex;
+  height: 36px;
+  justify-content: center;
+  margin-bottom: 14px;
+  width: 36px;
+}
+
+.mission-stat-icon img {
+  display: block;
+  height: 18px;
+  width: 18px;
+}
+
+.mission-stat-card b,
+.mission-summary-card dt {
+  color: var(--figma-primary);
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
+.mission-stat-card strong {
+  color: var(--figma-text);
+  display: block;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.mission-detail-layout {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 24px;
+}
+
+.mission-figma-card {
+  min-height: 250px;
+  padding: 28px 24px;
+}
+
+.mission-figma-card h2,
+.mission-ready-card h2,
+.booking-page-heading h1,
+.booking-step-panel h2,
+.mission-summary-card h2,
+.booking-reminders-card h2 {
+  color: var(--figma-text);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin: 0 0 24px;
+}
+
+.slot-summary-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0 12px;
+}
+
+.slot-summary-row strong,
+.slot-summary-row span {
+  color: var(--figma-text);
+  font-size: 13px;
+}
+
+.slot-summary-row span {
+  color: var(--figma-text-muted);
+}
+
+.slot-dot-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  max-width: 520px;
+}
+
+.slot-dot-grid span,
+.slot-dot-legend i {
+  border-radius: 999px;
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+}
+
+.slot-dot-grid .is-available,
+.slot-dot-legend .is-available {
+  background: var(--figma-primary);
+}
+
+.slot-dot-grid .is-booked,
+.slot-dot-legend .is-booked {
+  background: #e4e4ec;
+}
+
+.slot-dot-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.slot-dot-legend span {
+  align-items: center;
+  color: var(--figma-text-muted);
+  display: inline-flex;
+  font-size: 12px;
+  gap: 7px;
+}
+
+.figma-check-list {
+  display: grid;
+  gap: 22px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.figma-check-list li {
+  color: var(--figma-text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+  padding-left: 28px;
+  position: relative;
+}
+
+.figma-check-list li::before {
+  color: var(--figma-primary);
+  content: "✓";
+  font-weight: 800;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.mission-location-card {
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.mission-location-copy {
+  padding: 18px 24px;
+}
+
+.mission-location-copy strong {
+  color: var(--figma-text);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.mission-location-copy span {
+  color: var(--figma-text-muted);
+  font-size: 13px;
+}
+
+.mission-map-placeholder {
+  border-top: 1px solid var(--figma-border);
+  height: 280px;
+}
+
+.mission-ready-card,
+.mission-help-card {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 24px;
+}
+
+.mission-ready-card h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.mission-ready-card p {
+  color: var(--figma-text-muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.mission-ready-card p strong {
+  color: #dc2626;
+}
+
+.mission-ready-card .btn-book {
+  min-width: 224px;
+}
+
+.mission-help-card strong {
+  color: var(--figma-text);
+  font-size: 14px;
+}
+
+.mission-help-card div {
+  display: flex;
+  gap: 12px;
+}
+
+.booking-page-heading {
+  margin-bottom: 26px;
+}
+
+.page-book-slot .booking-page-heading {
+  margin-bottom: 6px;
+  margin-top: -28px;
+}
+
+.page-book-slot .booking-stepper {
+  margin-bottom: 0;
+}
+
+.booking-page-heading h1 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.booking-stepper {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  min-height: 56px;
+  padding: 12px 16px;
+}
+
+.booking-stepper span {
+  align-items: center;
+  color: #9ca3af;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 10px;
+}
+
+.booking-stepper span.is-active {
+  color: var(--figma-text);
+  font-weight: 700;
+}
+
+.booking-stepper b {
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 999px;
+  color: #9ca3af;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.booking-stepper .is-active b {
+  background: var(--figma-primary);
+  color: #ffffff;
+}
+
+.booking-stepper i {
+  border-right: 1px solid #d1d5db;
+  border-top: 1px solid #d1d5db;
+  display: inline-block;
+  height: 8px;
+  transform: rotate(45deg);
+  width: 8px;
+}
+
+.book-slot-layout {
+  align-items: start;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.75fr);
+}
+
+.booking-form-card {
+  min-height: 478px;
+  padding: 28px 24px 24px;
+}
+
+.booking-form-card form {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  max-width: none;
+  padding: 0;
+}
+
+.register-card .auth-card-header {
+  display: none;
+}
+
+.register-card form {
+  gap: 16px;
+}
+
+.register-card .form-grid {
+  gap: 18px;
+}
+
+.register-card .form-grid > div {
+  display: grid;
+  gap: 8px;
+}
+
+.figma-auth-card.register-card form label {
+  margin: 0 !important;
+}
+
+.register-card input {
+  min-height: 48px;
+}
+
+.register-card .auth-submit {
+  margin-top: 4px;
+}
+
+.booking-step-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.booking-step-panel h2 {
+  margin-bottom: 0;
+}
+
+.booking-step-panel p {
+  color: var(--figma-text-muted);
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+
+.booking-step-panel label {
+  color: var(--figma-text);
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.booking-step-panel label span {
+  color: #dc2626;
+}
+
+.booking-step-panel input,
+.booking-step-panel select,
+.booking-step-panel textarea {
+  background: #ffffff;
+  border: 1px solid var(--figma-border);
+  border-radius: 10px;
+  color: var(--figma-text);
+  font-size: 14px;
+  min-height: 48px;
+  padding: 12px 16px;
+  width: 100%;
+}
+
+.booking-step-panel textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.booking-step-panel small {
+  color: #9ca3af;
+  font-size: 12px;
+  margin-top: -8px;
+}
+
+.booking-next-step,
+.booking-step-actions .btn-primary {
+  margin-top: 6px;
+  min-height: 50px;
+  width: 100%;
+}
+
+.booking-next-step span {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.booking-step-actions {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 0.4fr 1fr;
+  margin-top: 6px;
+}
+
+.book-slot-sidebar {
+  display: grid;
+  gap: 20px;
+}
+
+.mission-summary-card {
+  background: #f6f3ff;
+  border-color: #c4b5fd;
+  padding: 28px 24px;
+}
+
+.mission-summary-card h2,
+.booking-reminders-card h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.mission-summary-card dl {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+}
+
+.mission-summary-card dd {
+  color: var(--figma-text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: -10px 0 0;
+}
+
+.booking-reminders-card {
+  padding: 28px 24px;
+}
+
+.booking-reminders-card .figma-check-list {
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .mission-stat-grid,
+  .mission-detail-layout,
+  .book-slot-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-figma-hero,
+  .mission-ready-card,
+  .mission-help-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .mission-ready-card .btn-book {
+    width: 100%;
+  }
+}
+
+/* Admin Figma icon rail refinements */
+.admin-sidebar-nav a,
+.admin-sidebar-actions a[href*="index"] {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.admin-sidebar-nav a::before,
+.admin-sidebar-actions a[href*="index"]::before {
+  background: currentColor;
+  content: "";
+  display: inline-block;
+  height: 16px;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  width: 16px;
+}
+
+.admin-sidebar-nav a:nth-child(1)::before {
+  mask-image: url("../icons/layout-grid.svg");
+}
+
+.admin-sidebar-nav a:nth-child(2)::before {
+  mask-image: url("../icons/plus.svg");
+}
+
+.admin-sidebar-nav a:nth-child(3)::before {
+  mask-image: url("../icons/calendar-purple.svg");
+}
+
+.admin-sidebar-nav a:nth-child(4)::before {
+  mask-image: url("../icons/users-purple.svg");
+}
+
+.admin-sidebar-nav a:nth-child(5)::before {
+  mask-image: url("../icons/file-text.svg");
+}
+
+.admin-sidebar-actions a[href*="index"]::before {
+  mask-image: url("../icons/arrow-left.svg");
+}
+
+.admin-primary-page .table-actions {
+  flex-wrap: nowrap;
+}
+
+.admin-primary-page .data-table th:last-child,
+.admin-primary-page .data-table td:last-child {
+  min-width: 178px;
+  width: 178px;
 }

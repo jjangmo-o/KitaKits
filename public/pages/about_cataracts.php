@@ -49,27 +49,34 @@ require_once(__DIR__ . '/../includes/layout.php');
             </ul>
         </div>
 
-        <div class="info-section">
-            <h2>Risk Factors & Causes</h2>
-            <p>Most cataracts happen because of normal changes in the eye as people get older. Several factors can increase the risk of developing cataracts:</p>
+        <section class="about-risk-section">
+            <h2>Risk Factors</h2>
+            <div class="about-risk-grid">
+                <article>
+                    <h3>Who is at higher risk?</h3>
+                    <ul class="risk-factor-list">
+                        <li><strong>Aging:</strong> The most common risk factor. Most cataracts develop after age 60, though they can occur at any age.</li>
+                        <li>Diabetes or high blood sugar</li>
+                        <li>Family history of cataracts</li>
+                        <li>Smoking or heavy alcohol use</li>
+                        <li>Long-term corticosteroid medication</li>
+                        <li>Past eye injury or eye disease</li>
+                    </ul>
+                </article>
 
-            <ul class="risk-factor-list">
-                <li><strong>Age:</strong> The most common risk factor. Most cataracts develop after age 60, though they can occur at any age.</li>
-                <li><strong>Ultraviolet (UV) Light:</strong> Prolonged sun exposure without eye protection accelerates cataract development.</li>
-                <li><strong>Diabetes:</strong> High blood sugar levels can cause cataracts to develop earlier and progress faster.</li>
-                <li><strong>Family History:</strong> Having a family member with cataracts increases your risk.</li>
-                <li><strong>Smoking:</strong> Smoking significantly increases cataract risk and speeds progression.</li>
-                <li><strong>Certain Medications:</strong> Long-term use of corticosteroids can lead to cataract formation.</li>
-                <li><strong>Eye Injury or Disease:</strong> Previous eye injuries or diseases like glaucoma increase risk.</li>
-                <li><strong>Alcohol and Nutrition:</strong> Heavy alcohol use can increase risk. A diet with fruits, vegetables, leafy greens, nuts, and whole grains supports eye health.</li>
-            </ul>
-
-            <div class="success-rate">
-                <h4>Lowering Risk</h4>
-                <p>You cannot guarantee prevention, but reputable sources recommend UV-protective sunglasses, eye protection during risky work or sports, not smoking, managing diabetes and other health conditions, and choosing eye-healthy foods.</p>
+                <article class="risk-reduce-card">
+                    <h3>Reduce your risk</h3>
+                    <ul class="risk-factor-list">
+                        <li>Wear UV-protective sunglasses outdoors</li>
+                        <li>Use eye protection during risky work or sports</li>
+                        <li>Do not smoke</li>
+                        <li>Manage diabetes and other health conditions</li>
+                        <li>Choose fruits, vegetables, leafy greens, nuts, and whole grains</li>
+                    </ul>
+                    <p><a href="https://www.mayoclinic.org/diseases-conditions/cataracts/symptoms-causes/syc-20353790" target="_blank" rel="noopener">Source: Mayo Clinic cataract prevention and risk factors</a></p>
+                </article>
             </div>
-            <p><a href="https://www.mayoclinic.org/diseases-conditions/cataracts/symptoms-causes/syc-20353790" target="_blank" rel="noopener">Source: Mayo Clinic cataract prevention and risk factors</a></p>
-        </div>
+        </section>
 
         <div class="info-section">
             <h2>Types of Cataracts</h2>

@@ -3,202 +3,205 @@ require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
 require_once(__DIR__ . '/../includes/layout.php');
 
-require_patient_page('login.php');
+function kk_mission_time_range($mission)
+{
+    if (!empty($mission['start_time']) && !empty($mission['end_time'])) {
+        return date('g:i A', strtotime($mission['start_time'])) . ' - ' . date('g:i A', strtotime($mission['end_time']));
+    }
 
-// Get the mission ID from the URL
+    if (!empty($mission['start_time'])) {
+        return date('g:i A', strtotime($mission['start_time']));
+    }
+
+    return 'Time to be announced';
+}
+
+function kk_mission_status($mission)
+{
+    $mission_date = strtotime($mission['mission_date']);
+    $today = strtotime(date('Y-m-d'));
+
+    if ($mission['mission_status'] === 'cancelled') {
+        return ['cancelled', 'Mission Cancelled'];
+    }
+
+    if ($mission_date < $today || $mission['mission_status'] === 'completed') {
+        return ['completed', 'Mission Completed'];
+    }
+
+    if ((int)$mission['available_slots'] <= 0 || $mission['mission_status'] === 'closed') {
+        return ['full', 'Fully Booked'];
+    }
+
+    return ['available', 'Accepting Bookings'];
+}
+
+function kk_slot_dots($available_slots, $total_slots)
+{
+    $dot_count = 30;
+    $total_slots = max(1, (int)$total_slots);
+    $available_slots = max(0, min((int)$available_slots, $total_slots));
+    $booked_slots = max(0, $total_slots - $available_slots);
+    $booked_dots = (int)round(($booked_slots / $total_slots) * $dot_count);
+    $html = '';
+
+    for ($i = 0; $i < $dot_count; $i++) {
+        $html .= '<span class="' . ($i < $booked_dots ? 'is-booked' : 'is-available') . '"></span>';
+    }
+
+    return $html;
+}
+
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// If no valid ID, redirect to homepage
 if ($mission_id === 0) {
-    header("Location: patient_portal.php");
+    header('Location: ../index.php#missions');
     exit();
 }
 
-// Fetch the mission details
-$sql = "SELECT * FROM missions WHERE mission_id = :id LIMIT 1";
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare('SELECT * FROM missions WHERE mission_id = :id LIMIT 1');
 $stmt->execute([':id' => $mission_id]);
 $mission = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// If mission doesn't exist, go back home
 if (!$mission) {
-    header("Location: patient_portal.php");
+    header('Location: ../index.php#missions');
     exit();
 }
 
-// Calculate mission status
-$mission_date = strtotime($mission['mission_date']);
-$today = strtotime(date('Y-m-d'));
-$days_until = ceil(($mission_date - $today) / 86400);
-
-if ($mission['mission_status'] === 'cancelled') {
-    $status = 'cancelled';
-    $status_text = 'Mission Cancelled';
-} elseif ($days_until < 0 || $mission['mission_status'] === 'completed') {
-    $status = 'completed';
-    $status_text = 'Mission Completed';
-} elseif ($mission['available_slots'] <= 0 || $mission['mission_status'] === 'closed') {
-    $status = 'full';
-    $status_text = 'Full - No Slots Available';
-} else {
-    $status = 'available';
-    $status_text = 'Accepting Bookings';
-}
+[$status, $status_text] = kk_mission_status($mission);
+$is_bookable = $status === 'available' && $mission['mission_date'] >= date('Y-m-d');
+$available_slots = (int)$mission['available_slots'];
+$total_slots = max(0, (int)$mission['total_slots']);
+$booked_slots = max(0, $total_slots - $available_slots);
+$date_label = date('F j, Y', strtotime($mission['mission_date']));
+$time_label = kk_mission_time_range($mission);
+$location_label = $mission['full_address'] ?: $mission['location'];
+$short_location = trim(($mission['location'] ?: '') . (($mission['city_area'] ?? '') ? ', ' . $mission['city_area'] : ''));
+$tagline = !empty($mission['venue_name'])
+    ? $mission['venue_name']
+    : 'Free cataract surgery mission for patients' . (!empty($mission['city_area']) ? ' in ' . $mission['city_area'] : '');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mission Details | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+<body class="make-ui page-mission-details">
+    <?php kk_render_header(['section' => 'pages', 'active' => '']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Mission Details', 'href' => '../index.php#missions'], ['label' => 'm' . $mission_id]]); ?>
 
-<body>
-    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
-    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Mission Details']]); ?>
-
-    <main class="container">
-        <a href="patient_portal.php#portal-missions" class="btn-back">
-            <span>←</span>
-            Back to Portal Missions
+    <main class="container mission-flow-page">
+        <a href="../index.php#missions" class="btn-back">
+            <span>&larr;</span>
+            Back to Missions
         </a>
 
-        <div class="mission-details-container">
-            <div class="mission-details-header">
-                <div>
-                    <h1><?php echo htmlspecialchars($mission['mission_name'] ?? $mission['organizer_name']); ?></h1>
-                    <p class="mission-tagline">Free Cataract Surgery Mission</p>
-                </div>
-                <div class="status-badge status-<?php echo $status; ?>">
-                    <?php echo $status_text; ?>
-                </div>
+        <section class="mission-figma-hero">
+            <div>
+                <h1><?php echo htmlspecialchars($mission['mission_name'] ?: $mission['organizer_name']); ?></h1>
+                <p><?php echo htmlspecialchars($tagline); ?></p>
             </div>
+            <span class="status-badge status-<?php echo htmlspecialchars($status); ?>"><?php echo htmlspecialchars($status_text); ?></span>
+        </section>
 
-            <div class="details-grid">
-                <div class="detail-box">
-                    <h3>📅 Mission Date & Time</h3>
-                    <p class="detail-content">
-                        <?php echo date('l, F j, Y', strtotime($mission['mission_date'])); ?>
-                    </p>
-                    <p class="detail-hint">
-                        <?php if ($days_until > 0): ?>
-                            This mission is in <strong><?php echo $days_until; ?></strong> day(s)
-                        <?php else: ?>
-                            This mission has already been completed
-                        <?php endif; ?>
-                    </p>
+        <section class="mission-stat-grid" aria-label="Mission facts">
+            <article class="mission-stat-card">
+                <span class="mission-stat-icon"><img src="../assets/icons/calendar-purple.svg" alt=""></span>
+                <b>Date</b>
+                <strong><?php echo htmlspecialchars($date_label); ?></strong>
+            </article>
+            <article class="mission-stat-card">
+                <span class="mission-stat-icon"><img src="../assets/icons/clock-purple.svg" alt=""></span>
+                <b>Time</b>
+                <strong><?php echo htmlspecialchars($time_label); ?></strong>
+            </article>
+            <article class="mission-stat-card">
+                <span class="mission-stat-icon"><img src="../assets/icons/map-pin.svg" alt=""></span>
+                <b>Location</b>
+                <strong><?php echo htmlspecialchars($short_location ?: $location_label); ?></strong>
+            </article>
+            <article class="mission-stat-card">
+                <span class="mission-stat-icon"><img src="../assets/icons/users-purple.svg" alt=""></span>
+                <b>Slots</b>
+                <strong><?php echo htmlspecialchars($available_slots); ?> of <?php echo htmlspecialchars($total_slots); ?> left</strong>
+            </article>
+        </section>
+
+        <section class="mission-detail-layout">
+            <article class="mission-figma-card slot-availability-card">
+                <div class="mission-card-title-row">
+                    <h2>Slot Availability</h2>
                 </div>
-
-                <div class="detail-box">
-                    <h3>📍 Location</h3>
-                    <p class="detail-content"><?php echo htmlspecialchars($mission['full_address'] ?: $mission['location']); ?></p>
-                    <p class="detail-hint">Please arrive 30 minutes early to complete registration</p>
+                <div class="slot-summary-row">
+                    <strong><?php echo htmlspecialchars($available_slots); ?> slots remaining</strong>
+                    <span><?php echo htmlspecialchars($booked_slots); ?> / <?php echo htmlspecialchars($total_slots); ?> booked</span>
                 </div>
-
-                <div class="detail-box">
-                    <h3>👥 Available Slots</h3>
-                    <p class="detail-content">
-                        <strong class="slots-number"><?php echo htmlspecialchars($mission['available_slots']); ?></strong>
-                        slot(s) remaining
-                    </p>
-                    <p class="detail-hint">
-                        <?php if ($mission['available_slots'] <= 5 && $mission['available_slots'] > 0): ?>
-                            <span class="slot-warning">⚠️ Limited slots - Book now!</span>
-                        <?php elseif ($mission['available_slots'] <= 0): ?>
-                            <span class="slot-empty">❌ No slots available</span>
-                        <?php else: ?>
-                            <span class="slot-available">✅ Plenty of slots available</span>
-                        <?php endif; ?>
-                    </p>
+                <div class="slot-dot-grid" aria-hidden="true">
+                    <?php echo kk_slot_dots($available_slots, $total_slots); ?>
                 </div>
-
-                <div class="detail-box">
-                    <h3>🏥 Mission Organizer</h3>
-                    <p class="detail-content"><?php echo htmlspecialchars($mission['organizer_name']); ?></p>
-                    <p class="detail-hint">This mission is organized by a trusted healthcare provider</p>
+                <div class="slot-dot-legend">
+                    <span><i class="is-available"></i>Available</span>
+                    <span><i class="is-booked"></i>Booked</span>
                 </div>
-            </div>
+            </article>
 
-            <?php if (!empty($mission['guidelines']) || !empty($mission['day_of_instructions'])): ?>
-                <div class="mission-info-section">
-                    <h2>Mission Guidelines</h2>
-                    <?php if (!empty($mission['guidelines'])): ?>
-                        <p><?php echo nl2br(htmlspecialchars($mission['guidelines'])); ?></p>
-                    <?php endif; ?>
-                    <?php if (!empty($mission['day_of_instructions'])): ?>
-                        <h3>Day-of Instructions</h3>
-                        <p><?php echo nl2br(htmlspecialchars($mission['day_of_instructions'])); ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="mission-info-section">
+            <article class="mission-figma-card">
                 <h2>What to Expect</h2>
-                <div class="info-list">
-                    <div class="info-item">
-                        <span class="info-icon">1️⃣</span>
-                        <div>
-                            <h4>Registration & Health Screening</h4>
-                            <p>Upon arrival, you'll complete basic registration and health assessment to ensure you're a suitable candidate for the procedure.</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">2️⃣</span>
-                        <div>
-                            <h4>Eye Examination</h4>
-                            <p>Our medical team will perform a comprehensive eye examination to assess your cataract and overall eye health.</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">3️⃣</span>
-                        <div>
-                            <h4>Cataract Surgery</h4>
-                            <p>The procedure is usually brief and performed under local anesthesia, but the full visit takes longer because of registration, screening, preparation, recovery, and discharge instructions.</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">4️⃣</span>
-                        <div>
-                            <h4>Post-Surgery Care & Instructions</h4>
-                            <p>You'll receive detailed aftercare instructions and follow-up appointments information before leaving the mission site.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <ul class="figma-check-list">
+                    <li>Medical screening upon arrival</li>
+                    <li>Surgery under local anesthesia (20-30 min)</li>
+                    <li>Post-op monitoring (1-2 hours)</li>
+                    <li>Free medications and eye shield provided</li>
+                </ul>
+            </article>
 
-            <div class="mission-requirements">
+            <article class="mission-figma-card">
                 <h2>Before You Come</h2>
-                <div class="requirements-list">
-                    <div class="requirement">✓ Bring a valid ID or identification document</div>
-                    <div class="requirement">✓ Bring any existing medical records or eye prescriptions</div>
-                    <div class="requirement">✓ Have someone accompany you (for support and transportation)</div>
-                    <div class="requirement">✓ Follow any fasting instructions provided by the organizer</div>
-                    <div class="requirement">✓ Wear comfortable, clean clothing</div>
-                    <div class="requirement">✓ Arrive 30 minutes before the mission time</div>
-                </div>
-            </div>
+                <ul class="figma-check-list">
+                    <li>Valid government ID</li>
+                    <li>Fasting 6 hours before surgery</li>
+                    <li>Bring a companion (18+ years)</li>
+                    <li>No contact lenses 1 week prior</li>
+                    <?php if (!empty($mission['guidelines'])): ?>
+                        <li><?php echo htmlspecialchars($mission['guidelines']); ?></li>
+                    <?php endif; ?>
+                </ul>
+            </article>
+        </section>
 
-            <div class="mission-action">
-                <?php if ($mission['available_slots'] > 0 && $mission['mission_status'] === 'open' && $mission['mission_date'] >= date('Y-m-d')): ?>
-                    <a href="book_slot.php?id=<?php echo urlencode($mission['mission_id']); ?>" class="btn-book btn-large">
-                        <span class="btn-icon">📋</span>
-                        Submit Booking Request
-                    </a>
-                <?php else: ?>
-                    <button class="btn-book btn-large disabled-action" disabled>
-                        <span class="btn-icon">❌</span>
-                        No Slots Available
-                    </button>
-                <?php endif; ?>
+        <section class="mission-location-card">
+            <div class="mission-location-copy">
+                <strong>Location</strong>
+                <span><?php echo htmlspecialchars($location_label); ?></span>
             </div>
+            <div class="mission-map-placeholder" aria-hidden="true"></div>
+        </section>
 
-            <div class="mission-support">
-                <h3>Need Help?</h3>
-                <p>If you have questions about this mission or need assistance, visit our <a href="faq.php">FAQ page</a> or check the <a href="patient_guide.php">Patient Guide</a> for more information.</p>
+        <section class="mission-ready-card">
+            <div>
+                <h2>Ready to secure your slot?</h2>
+                <p>Only <strong><?php echo htmlspecialchars($available_slots); ?> slots</strong> remaining. Book before they fill up.</p>
             </div>
-        </div>
+            <?php if ($is_bookable): ?>
+                <a href="book_slot.php?id=<?php echo urlencode($mission_id); ?>" class="btn-book">Book This Mission Now</a>
+            <?php else: ?>
+                <button class="btn-book disabled-action" disabled>No Slots Available</button>
+            <?php endif; ?>
+        </section>
+
+        <section class="mission-help-card">
+            <strong>Have questions before booking?</strong>
+            <div>
+                <a href="faq.php" class="compact-button">FAQ</a>
+                <a href="patient_guide.php" class="compact-button">Patient Guide</a>
+            </div>
+        </section>
     </main>
+
     <?php kk_render_footer('pages'); ?>
 </body>
 </html>

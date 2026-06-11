@@ -76,7 +76,7 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="page-booking-confirmation">
-    <?php kk_render_header(['section' => 'pages', 'active' => 'my_bookings', 'no_print' => true]); ?>
+    <?php kk_render_header(['section' => 'pages', 'active' => '', 'no_print' => true]); ?>
     <?php kk_render_breadcrumbs('pages', [['label' => 'Booking Confirmation', 'href' => 'my_bookings.php'], ['label' => $slip['booking_reference']]], ['no_print' => true]); ?>
 
     <main class="container slip-container">

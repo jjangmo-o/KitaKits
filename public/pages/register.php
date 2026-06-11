@@ -198,10 +198,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <label for="contact_number">Contact Number *</label>
-                <input type="text" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ''); ?>" placeholder="e.g., 09123456789" pattern="[\+0-9\s\-\(\)]{7,20}" autocomplete="tel" required>
+                <input type="text" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ''); ?>" placeholder="09XXXXXXXXX" pattern="[\+0-9\s\-\(\)]{7,20}" autocomplete="tel" required>
 
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" maxlength="150" autocomplete="email">
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" placeholder="you@example.com" maxlength="150" autocomplete="email">
 
                 <div class="form-grid">
                     <div>
@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-grid">
                     <div>
                         <label for="password">Password *</label>
-                        <input type="password" id="password" name="password" autocomplete="new-password" required>
+                        <input type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
                     </div>
                     <div>
                         <label for="confirm_password">Confirm Password *</label>
@@ -225,11 +225,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary auth-submit">Sign Up</button>
+                <button type="submit" class="btn-primary auth-submit">Create Account</button>
             </form>
 
             <div class="auth-switch">
-                <span>Already have login details?</span>
+                <span>Already have an account?</span>
                 <a href="login.php">Log in</a>
             </div>
         </section>

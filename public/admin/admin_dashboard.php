@@ -15,7 +15,7 @@ $admin = current_admin_user();
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body>
+<body class="admin-body">
     <header>
         <div class="container">
             <div class="header-logo">

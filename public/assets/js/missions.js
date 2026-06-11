@@ -17,12 +17,18 @@
     }
 
     function missionCard(mission, isFullyBooked = false) {
+        const totalSlots = Number(mission.total_slots || mission.available_slots || 0);
+        const availableSlots = Number(mission.available_slots || 0);
+        const percent = totalSlots > 0 ? Math.max(0, Math.min(100, (availableSlots / totalSlots) * 100)) : 0;
         const slotsContent = isFullyBooked
-            ? `<div class="mission-unavailable">All slots booked</div>
+            ? `<span class="status-badge status-full">Fully Booked</span>
+               <div class="mission-unavailable">All slots booked</div>
                <div class="mission-card-actions">
                    <a href="${pageUrl('mission_details', mission.mission_id)}" class="btn-secondary compact-button">Details</a>
                </div>`
-            : `<div class="mission-slots"><strong>${escapeHtml(mission.available_slots)}</strong> slots available</div>
+            : `<span class="status-badge status-available">Accepting Bookings</span>
+               <div class="mission-slots"><strong>${escapeHtml(mission.available_slots)}</strong> slots available</div>
+               <div class="slot-meter" aria-hidden="true"><span style="width: ${percent}%"></span></div>
                <div class="mission-card-actions">
                    <a href="${pageUrl('mission_details', mission.mission_id)}" class="btn-secondary compact-button">Details</a>
                    <a href="${pageUrl('book_slot', mission.mission_id)}" class="btn-book">
@@ -33,10 +39,14 @@
 
         return `
             <div class="mission-card${isFullyBooked ? ' mission-card-muted' : ''}">
-                <h3>${escapeHtml(mission.mission_name || mission.organizer_name)}</h3>
-                <div class="mission-organizer">${escapeHtml(mission.organizer_name)}</div>
-                <div class="mission-date">Date: ${escapeHtml(mission.mission_date_long)}</div>
-                <div class="mission-location">Location: ${escapeHtml(mission.full_address || mission.location)}</div>
+                <div class="mission-card-head">
+                    <div>
+                        <h3>${escapeHtml(mission.mission_name || mission.organizer_name)}</h3>
+                        <div class="mission-organizer">${escapeHtml(mission.organizer_name)}</div>
+                    </div>
+                </div>
+                <div class="mission-date">${escapeHtml(mission.mission_date_long)}</div>
+                <div class="mission-location">${escapeHtml(mission.full_address || mission.location)}</div>
                 ${slotsContent}
             </div>
         `;

@@ -109,7 +109,7 @@ function mission_value($mission, $field)
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body>
+<body class="admin-body">
     <header>
         <div class="container">
             <div class="header-logo">

@@ -16,24 +16,33 @@ if (current_patient_id()) {
     <title>KitaKits | Patient Access</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="entry-body">
+<body class="entry-body make-ui">
     <header class="entry-header">
         <div class="entry-brand">
             <img src="assets/images/logo.png" alt="KitaKits Logo">
             <div>
                 <strong>KitaKits</strong>
-                <span>Cataract mission patient portal</span>
+                <span>Free cataract surgery missions</span>
             </div>
         </div>
-        <a href="admin/admin_dashboard.php" class="entry-admin-link">Admin Login</a>
+        <nav class="entry-nav" aria-label="Patient resources">
+            <a href="pages/patient_guide.php">Patient Guide</a>
+            <a href="pages/faq.php">FAQ</a>
+            <a href="pages/about_cataracts.php">About Cataracts</a>
+        </nav>
+        <a href="admin/admin_dashboard.php" class="entry-admin-link">Admin</a>
     </header>
 
     <main class="entry-shell">
         <section class="entry-hero" aria-label="KitaKits patient access">
             <div class="entry-copy">
-                <span class="eyebrow">Patient access first</span>
-                <h1>Manage your cataract mission journey in one portal.</h1>
-                <p>Log in to find missions, submit booking requests, complete pre-screening, track confirmation, and print your mission-day slip.</p>
+                <span class="eyebrow">Free cataract surgery missions</span>
+                <h1>Restore your sight. No cost. No barriers.</h1>
+                <p>KitaKits connects patients across the Philippines with outreach programs. Log in to find a mission, book your slot, complete pre-screening, and print your confirmation slip.</p>
+                <div class="entry-hero-actions">
+                    <a href="pages/login.php" class="entry-primary-action">Log In</a>
+                    <a href="pages/register.php" class="entry-secondary-action">Register</a>
+                </div>
             </div>
 
             <div class="entry-visual" aria-hidden="true">
@@ -69,26 +78,58 @@ if (current_patient_id()) {
         </section>
 
         <section class="entry-actions-panel" aria-label="Patient login and signup">
-            <a href="pages/login.php" class="entry-primary-action">Log In</a>
-            <div class="entry-divider">
-                <span>New patient?</span>
-            </div>
-            <a href="pages/register.php" class="entry-secondary-action">Sign Up</a>
+            <span class="eyebrow">Start here</span>
+            <h2>Patient access</h2>
             <p>Bookings are created inside the Patient Portal after login.</p>
+            <div class="entry-panel-actions">
+                <a href="pages/login.php" class="entry-primary-action">Log In</a>
+                <a href="pages/register.php" class="entry-secondary-action">Sign Up</a>
+            </div>
         </section>
 
         <section class="entry-assurance" aria-label="Portal capabilities">
             <div>
-                <strong>Booked vs confirmed</strong>
-                <span>Know if your request is only received or already secured.</span>
+                <strong>500+</strong>
+                <span>Successful surgery journeys supported by missions.</span>
             </div>
             <div>
-                <strong>Pre-screening included</strong>
-                <span>Disclose health information before mission day.</span>
+                <strong>20-30 min</strong>
+                <span>Typical outpatient surgery duration under local anesthesia.</span>
             </div>
             <div>
-                <strong>Printable reference slip</strong>
-                <span>Confirmed bookings generate a coordinator-friendly reference.</span>
+                <strong>15+</strong>
+                <span>Partner organizers and local medical teams.</span>
+            </div>
+        </section>
+
+        <section class="entry-resources" aria-label="Patient resources">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">Patient resources</span>
+                    <h2>Everything you need before mission day</h2>
+                </div>
+            </div>
+            <div class="resource-grid">
+                <a href="pages/patient_guide.php" class="resource-card">
+                    <img src="assets/icons/guide.png" alt="">
+                    <strong>Patient Guide</strong>
+                    <span>Before, during, and after surgery.</span>
+                </a>
+                <a href="pages/faq.php" class="resource-card">
+                    <img src="assets/icons/faq.png" alt="">
+                    <strong>FAQ</strong>
+                    <span>Answers to common patient questions.</span>
+                </a>
+                <a href="pages/about_cataracts.php" class="resource-card">
+                    <img src="assets/icons/about.png" alt="">
+                    <strong>About Cataracts</strong>
+                    <span>Symptoms, treatment, and recovery basics.</span>
+                </a>
+                <a href="pages/login.php" class="resource-card">
+                    <img src="assets/icons/bookings.png" alt="">
+                    <strong>My Bookings</strong>
+                    <span>Track status and print confirmed slips.</span>
+                </a>
             </div>
         </section>
     </main>

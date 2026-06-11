@@ -163,27 +163,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Sign Up | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="auth-flow-body">
-    <main class="auth-flow-shell register-shell">
-        <section class="auth-flow-visual" aria-label="Account creation preview">
-            <a href="../index.php" class="auth-brand">
+<body class="auth-page-body">
+    <header class="site-header">
+        <div class="container site-header-inner">
+            <a href="../index.php" class="site-brand">
                 <img src="../assets/images/logo.png" alt="KitaKits Logo">
                 <span>KitaKits</span>
             </a>
-            <div class="auth-preview">
-                <span class="eyebrow">No login details yet?</span>
-                <h1>Create your patient account first.</h1>
-                <p>Your account links your profile, mission requests, intake forms, and printable slips to one patient record.</p>
-                <div class="auth-preview-steps">
-                    <span class="active">Sign Up</span>
-                    <span>Login</span>
-                    <span>Portal</span>
-                    <span>Booking</span>
-                </div>
+            <nav class="site-nav" aria-label="Patient navigation">
+                <a href="../index.php">Home</a>
+                <a href="patient_guide.php">Patient Guide</a>
+                <a href="faq.php">FAQ</a>
+                <a href="about_cataracts.php">About Cataracts</a>
+            </nav>
+            <div class="site-actions">
+                <a href="login.php">Log In</a>
+                <a href="register.php" class="site-primary">Register</a>
             </div>
+        </div>
+    </header>
+
+    <main class="auth-page-main">
+        <section class="auth-page-heading">
+            <h1>Create an account</h1>
+            <p>Register to book surgery slots and manage your appointments.</p>
         </section>
 
-        <section class="auth-card register-card" aria-label="Patient registration">
+        <section class="auth-card register-card figma-auth-card figma-auth-card-wide" aria-label="Patient registration">
             <div class="auth-card-header">
                 <span class="eyebrow">Patient sign up</span>
                 <h2>Create account</h2>
@@ -243,5 +249,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <strong>KitaKits</strong>
+            <span>Connecting patients with free cataract surgery missions across the Philippines.</span>
+        </div>
+    </footer>
 </body>
 </html>

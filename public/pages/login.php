@@ -30,30 +30,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Log In | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="auth-flow-body">
-    <main class="auth-flow-shell">
-        <section class="auth-flow-visual" aria-label="Patient portal preview">
-            <a href="../index.php" class="auth-brand">
+<body class="auth-page-body">
+    <header class="site-header">
+        <div class="container site-header-inner">
+            <a href="../index.php" class="site-brand">
                 <img src="../assets/images/logo.png" alt="KitaKits Logo">
                 <span>KitaKits</span>
             </a>
-            <div class="auth-preview">
-                <span class="eyebrow">Next step</span>
-                <h1>Log in to continue to your patient portal.</h1>
-                <p>Missions, booking requests, pre-screening, and printable slips live inside your dashboard.</p>
-                <div class="auth-preview-steps">
-                    <span class="active">Login</span>
-                    <span>Find Mission</span>
-                    <span>Book</span>
-                    <span>Print</span>
-                </div>
+            <nav class="site-nav" aria-label="Patient navigation">
+                <a href="../index.php">Home</a>
+                <a href="patient_guide.php">Patient Guide</a>
+                <a href="faq.php">FAQ</a>
+                <a href="about_cataracts.php">About Cataracts</a>
+            </nav>
+            <div class="site-actions">
+                <a href="login.php" class="site-link-active">Log In</a>
+                <a href="register.php" class="site-primary">Register</a>
             </div>
+        </div>
+    </header>
+
+    <main class="auth-page-main">
+        <section class="auth-page-heading">
+            <h1>Welcome back</h1>
+            <p>Log in to manage your bookings and profile.</p>
         </section>
 
-        <section class="auth-card" aria-label="Patient login">
+        <section class="auth-card figma-auth-card" aria-label="Patient login">
             <div class="auth-card-header">
                 <span class="eyebrow">Patient login</span>
-                <h2>Welcome back</h2>
+                <h2>Sign in</h2>
                 <p>Use the email or contact number connected to your patient record.</p>
             </div>
 
@@ -92,6 +98,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <p class="inline-note auth-note">Demo patient: 09111111111 / patient123</p>
         </section>
+
+        <section class="demo-credentials" aria-label="Demo credentials">
+            <strong>Demo credentials</strong>
+            <span>Patient: 09111111111 / patient123</span>
+            <span>Admin: admin@kitakits.local / admin123</span>
+        </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <strong>KitaKits</strong>
+            <span>Connecting patients with free cataract surgery missions across the Philippines.</span>
+        </div>
+    </footer>
 </body>
 </html>

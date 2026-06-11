@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
 require_once(__DIR__ . '/../api/_validation.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 if (current_patient_id()) {
     header('Location: patient_portal.php');
@@ -164,24 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="auth-page-body">
-    <header class="site-header">
-        <div class="container site-header-inner">
-            <a href="../index.php" class="site-brand">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-                <span>KitaKits</span>
-            </a>
-            <nav class="site-nav" aria-label="Patient navigation">
-                <a href="../index.php">Home</a>
-                <a href="patient_guide.php">Patient Guide</a>
-                <a href="faq.php">FAQ</a>
-                <a href="about_cataracts.php">About Cataracts</a>
-            </nav>
-            <div class="site-actions">
-                <a href="login.php">Log In</a>
-                <a href="register.php" class="site-primary">Register</a>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'register']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Register']]); ?>
 
     <main class="auth-page-main">
         <section class="auth-page-heading">
@@ -250,11 +235,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <strong>KitaKits</strong>
-            <span>Connecting patients with free cataract surgery missions across the Philippines.</span>
-        </div>
-    </footer>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

@@ -3,6 +3,7 @@ require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_validation.php');
 require_once(__DIR__ . '/../api/_schema_helpers.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 $patient_id = require_patient_page('login.php');
 
@@ -131,26 +132,8 @@ function checked($intake, $field)
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Medical Pre-screening</h1>
-                    <p>Disclose health details before mission day</p>
-                </div>
-                <div class="header-actions">
-                    <nav class="header-nav">
-                        <a href="patient_portal.php">Patient Portal</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Pre-screening']]); ?>
 
     <main class="container">
         <a href="patient_portal.php#portal-bookings" class="btn-back">
@@ -202,5 +185,6 @@ function checked($intake, $field)
             <button type="submit">Save Pre-screening</button>
         </form>
     </main>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

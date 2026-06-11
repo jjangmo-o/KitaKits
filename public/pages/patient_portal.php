@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
 require_once(__DIR__ . '/../api/_validation.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 $patient_id = require_patient_page();
 $profile_error = '';
@@ -184,30 +185,8 @@ $patient_name = trim(implode(' ', array_filter([
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Patient Dashboard</h1>
-                    <p>Manage your profile, bookings, intake forms, and slips</p>
-                </div>
-                <div class="header-actions" aria-label="Primary navigation">
-                    <nav class="header-nav">
-                        <a href="patient_portal.php">Patient Portal</a>
-                        <a href="#portal-missions">Find Missions</a>
-                        <a href="#portal-bookings">Bookings</a>
-                        <a href="#portal-profile">Profile</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                        <a href="logout.php">Logout</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard']]); ?>
 
     <main class="container portal-workspace">
         <?php if (isset($_GET['registered'])): ?>
@@ -458,6 +437,7 @@ $patient_name = trim(implode(' ', array_filter([
             </form>
         </section>
     </main>
+    <?php kk_render_footer('pages'); ?>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/missions.js"></script>
 </body>

@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 $admin_id = require_admin_page();
 $error = '';
@@ -92,17 +93,11 @@ function old_value($field, $default = '')
 </head>
 
 <body class="admin-body">
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-content">
-                <h1>Add New Mission</h1>
-                <p>Create a cataract mission with reporting-ready fields</p>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'admin', 'active' => 'add_mission', 'mode' => 'admin']); ?>
+    <?php kk_render_breadcrumbs('admin', [
+        ['label' => 'Admin Dashboard', 'href' => 'admin_dashboard.php'],
+        ['label' => 'Add Mission'],
+    ]); ?>
 
     <main class="container admin-workspace form-workspace">
         <a href="admin_dashboard.php" class="btn-back">
@@ -182,5 +177,7 @@ function old_value($field, $default = '')
             <button type="submit" name="submit">Save Mission</button>
         </form>
     </main>
+
+    <?php kk_render_footer('admin'); ?>
 </body>
 </html>

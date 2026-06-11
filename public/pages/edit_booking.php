@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_schema_helpers.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 $patient_id = require_patient_page('login.php');
 
@@ -125,27 +126,8 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="Kitakits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Edit Booking</h1>
-                    <p>Update your reservation details</p>
-                </div>
-                <div class="header-actions" aria-label="Primary navigation">
-                    <nav class="header-nav">
-                        <a href="patient_portal.php">Patient Portal</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                        <a href="about_cataracts.php">About Cataracts</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Edit Booking']]); ?>
 
     <main class="container">
         <a href="patient_portal.php#portal-bookings" class="btn-back">
@@ -241,5 +223,6 @@ if (isset($_POST['submit'])) {
             <button type="submit" name="submit">Update Booking</button>
         </form>
     </main>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

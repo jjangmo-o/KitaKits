@@ -24,16 +24,16 @@
             ? `<span class="status-badge status-full">Fully Booked</span>
                <div class="mission-unavailable">All slots booked</div>
                <div class="mission-card-actions">
-                   <a href="${pageUrl('mission_details', mission.mission_id)}" class="btn-secondary compact-button">Details</a>
+                   <a href="${pageUrl('mission_details', mission.mission_id)}" class="btn-secondary compact-button">View Details</a>
                </div>`
             : `<span class="status-badge status-available">Accepting Bookings</span>
                <div class="mission-slots"><strong>${escapeHtml(mission.available_slots)}</strong> slots available</div>
                <div class="slot-meter" aria-hidden="true"><span style="width: ${percent}%"></span></div>
                <div class="mission-card-actions">
-                   <a href="${pageUrl('mission_details', mission.mission_id)}" class="btn-secondary compact-button">Details</a>
+                   <a href="${pageUrl('mission_details', mission.mission_id)}" class="btn-secondary compact-button">View Details</a>
                    <a href="${pageUrl('book_slot', mission.mission_id)}" class="btn-book">
                        <img src="${assetPrefix}icons/book.png" alt="" class="btn-icon">
-                       Book Request
+                       Book Slot
                    </a>
                </div>`;
 
@@ -85,7 +85,7 @@
                     .join('');
             }
 
-            setStatus(status, `Loaded ${available.length + fullyBooked.length} mission record(s).`, 'success');
+            setStatus(status, '');
         } catch (error) {
             setStatus(status, error.message || 'Unable to load missions.', 'error');
         } finally {

@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 require_patient_page('login.php');
 
@@ -54,27 +55,8 @@ if ($mission['mission_status'] === 'cancelled') {
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Mission Details</h1>
-                    <p>Complete information about this cataract mission</p>
-                </div>
-                <div class="header-actions" aria-label="Primary navigation">
-                    <nav class="header-nav">
-                        <a href="patient_portal.php">Patient Portal</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                        <a href="about_cataracts.php">About Cataracts</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Mission Details']]); ?>
 
     <main class="container">
         <a href="patient_portal.php#portal-missions" class="btn-back">
@@ -217,5 +199,6 @@ if ($mission['mission_status'] === 'cancelled') {
             </div>
         </div>
     </main>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

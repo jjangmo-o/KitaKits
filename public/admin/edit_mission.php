@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 require_admin_page();
 $error = '';
@@ -110,17 +111,11 @@ function mission_value($mission, $field)
 </head>
 
 <body class="admin-body">
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-content">
-                <h1>Edit Mission</h1>
-                <p>Update mission details and reporting fields</p>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'admin', 'active' => 'admin', 'mode' => 'admin']); ?>
+    <?php kk_render_breadcrumbs('admin', [
+        ['label' => 'Admin Dashboard', 'href' => 'admin_dashboard.php'],
+        ['label' => 'Edit Mission'],
+    ]); ?>
 
     <main class="container admin-workspace form-workspace">
         <a href="admin_dashboard.php" class="btn-back">
@@ -202,5 +197,7 @@ function mission_value($mission, $field)
             </form>
         <?php endif; ?>
     </main>
+
+    <?php kk_render_footer('admin'); ?>
 </body>
 </html>

@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+<?php
+require_once(__DIR__ . '/../includes/layout.php');
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,108 +10,43 @@
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="Kitakits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>About Cataracts</h1>
-                    <p>Understanding the condition and treatment options</p>
-                </div>
-                <div class="header-actions" aria-label="Primary navigation">
-                    <nav class="header-nav">
-                        <a href="../index.php">Opening Page</a>
-                        <a href="login.php">Log In</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                        <a href="about_cataracts.php">About Cataracts</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+<body class="page-about-cataracts">
+    <?php kk_render_header(['section' => 'pages', 'active' => 'about']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'About Cataracts']]); ?>
 
     <main class="container">
-        <a href="../index.php" class="btn-back">
-            <span>â†</span>
-            Back to Missions
-        </a>
+        <a href="../index.php" class="btn-back">Back to Missions</a>
 
-        <div class="source-panel">
-            <h3>Verified Medical Sources</h3>
-            <p>This page was cross-checked against patient information from the National Eye Institute, Mayo Clinic, the World Health Organization, and the American Academy of Ophthalmology. Links open the original source pages.</p>
-            <div class="source-links">
-                <a class="source-button" href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts" target="_blank" rel="noopener">National Eye Institute</a>
-                <a class="source-button" href="https://www.mayoclinic.org/diseases-conditions/cataracts/symptoms-causes/syc-20353790" target="_blank" rel="noopener">Mayo Clinic: Symptoms & Causes</a>
-                <a class="source-button" href="https://www.mayoclinic.org/tests-procedures/cataract-surgery/about/pac-20384765" target="_blank" rel="noopener">Mayo Clinic: Surgery</a>
-                <a class="source-button" href="https://www.who.int/en/news-room/fact-sheets/detail/blindness-and-visual-impairment" target="_blank" rel="noopener">WHO Vision Impairment Fact Sheet</a>
-                <a class="source-button" href="https://store.aao.org/media/resources/051225/Cataract-Surgery_09-19.pdf" target="_blank" rel="noopener">AAO Cataract Surgery PDF</a>
+        <section class="figma-page-intro about-intro">
+            <h1>About Cataracts</h1>
+            <p>Understand what cataracts are, how to recognize them, and how surgery restores clear vision — backed by medical evidence.</p>
+            <div class="verified-chips">
+                <span>Verified by:</span>
+                <b>WHO Eye Health</b>
+                <b>Philippine Academy of Ophthalmology</b>
+                <b>American Academy of Ophthalmology</b>
             </div>
-        </div>
+        </section>
 
         <div class="info-section">
             <h2>What is a Cataract?</h2>
-            <p>A cataract is a clouding of the lens in your eye. The lens is normally clear and focuses light onto the retina (the back of the eye) to produce clear images. When a cataract develops, the lens becomes increasingly opaque (cloudy), which scatters light and prevents a clear image from reaching the retina.</p>
-            
-            <p>Think of it like looking through a frosted glass window: you can see light, but the image is cloudy and unclear. Cataracts usually develop gradually. They cannot be cured with drops or medicine; surgery is the treatment that removes the cloudy lens when cataracts interfere with daily activities.</p>
-
-            <p><a href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts" target="_blank" rel="noopener">Source: National Eye Institute cataract overview</a></p>
-
-            <h3>How the Eye Works</h3>
-            <p>To understand cataracts better, it helps to know how the eye functions:</p>
-            <ul class="eye-anatomy-list">
-                <li>
-                    <strong>Cornea:</strong> The clear front surface that helps focus light
-                </li>
-                <li>
-                    <strong>Lens:</strong> A clear structure that changes shape to focus light precisely on the retina
-                </li>
-                <li>
-                    <strong>Retina:</strong> The light-sensitive tissue at the back of the eye that converts light into nerve signals
-                </li>
-                <li>
-                    <strong>Optic Nerve:</strong> Transmits signals from the retina to the brain, where vision is interpreted
-                </li>
-            </ul>
-
-            <p class="paragraph-spaced">When the lens becomes cloudy from a cataract, light cannot pass through clearly, resulting in blurred or dim vision.</p>
+            <p>A cataract is a clouding of the eye's natural lens, which sits behind the iris and pupil. The lens focuses light onto the retina — when it becomes cloudy, images appear blurred or hazy.</p>
+            <p>Cataracts are the <strong>leading cause of blindness worldwide</strong>, but they are completely treatable. In the Philippines, free surgery missions help thousands of patients regain their sight every year.</p>
         </div>
 
         <div class="info-section">
-            <h2>Symptoms of Cataracts</h2>
-            <p>Cataract symptoms develop gradually and may include:</p>
-
-            <div class="symptom-grid">
-                <div class="symptom-card">
-                    <h4>Blurred Vision</h4>
-                    <p>Vision becomes progressively blurry or fuzzy, as if looking through cloudy glass or fog.</p>
-                </div>
-                <div class="symptom-card">
-                    <h4>Difficulty Seeing at Night</h4>
-                    <p>Night driving becomes unsafe and challenging. Headlights and streetlights may appear too bright.</p>
-                </div>
-                <div class="symptom-card">
-                    <h4>Difficulty Reading</h4>
-                    <p>Fine print becomes harder to read even with glasses. You may need brighter light to read.</p>
-                </div>
-                <div class="symptom-card">
-                    <h4>Colors Appear Faded</h4>
-                    <p>Colors lose vibrancy and appear dull, yellowish, or brownish instead of their natural brightness.</p>
-                </div>
-                <div class="symptom-card">
-                    <h4>Glare and Halos</h4>
-                    <p>You may see halos around lights and experience glare sensitivity, making daylight uncomfortable.</p>
-                </div>
-                <div class="symptom-card">
-                    <h4>Frequent Changes in Glasses</h4>
-                    <p>Prescription strength may change frequently. New glasses may help temporarily but don't resolve the cataract.</p>
-                </div>
-            </div>
-
-            <p><strong>Important:</strong> Not all eye problems are caused by cataracts. If you experience these symptoms, visit an eye care professional for proper diagnosis.</p>
+            <h2>Symptoms</h2>
+            <p>Common signs that may indicate cataracts are developing</p>
+            <ul class="symptom-checklist">
+                <li>Blurry or cloudy vision</li>
+                <li>Sensitivity to light and glare</li>
+                <li>Poor night vision</li>
+                <li>Fading or yellowed colors</li>
+                <li>Frequent prescription changes</li>
+                <li>Halos around lights</li>
+                <li>Difficulty reading fine print</li>
+                <li>Double vision in one eye</li>
+            </ul>
         </div>
 
         <div class="info-section">
@@ -156,7 +94,7 @@
 
             <div class="treatment-options">
                 <div class="treatment-option">
-                    <h4>ðŸ‘ï¸ Early Stage Management</h4>
+                    <h4>Early Stage Management</h4>
                     <p>If cataracts are mild and not interfering with daily activities, your doctor may recommend:</p>
                     <ul class="compact-list">
                         <li>Stronger eyeglasses or contacts</li>
@@ -166,7 +104,7 @@
                     </ul>
                 </div>
                 <div class="treatment-option">
-                    <h4>ðŸ¥ Cataract Surgery</h4>
+                    <h4>Cataract Surgery</h4>
                     <p>The only definitive treatment when cataracts significantly affect vision:</p>
                     <ul class="compact-list">
                         <li>Surgical removal of the cloudy lens</li>
@@ -218,37 +156,37 @@
             <h2>Myths vs. Facts About Cataracts</h2>
 
             <div class="myth-fact">
-                <h4>âŒ Myth: Cataracts can spread from one eye to the other</h4>
+                <h4>Myth: Cataracts can spread from one eye to the other</h4>
                 <p><strong>Fact:</strong> Cataracts develop independently in each eye. However, most people develop cataracts in both eyes over time as both are exposed to the same risk factors.</p>
             </div>
 
             <div class="myth-fact">
-                <h4>âŒ Myth: You must be elderly to have cataracts</h4>
+                <h4>Myth: You must be elderly to have cataracts</h4>
                 <p><strong>Fact:</strong> While more common in older adults, cataracts can develop at any age, including in infants. Age is just one risk factor among many.</p>
             </div>
 
             <div class="myth-fact">
-                <h4>âŒ Myth: Cataracts can be treated with eye drops</h4>
+                <h4>Myth: Cataracts can be treated with eye drops</h4>
                 <p><strong>Fact:</strong> There is no medication or eye drop that can cure cataracts. Surgery is the only definitive treatment.</p>
             </div>
 
             <div class="myth-fact">
-                <h4>âŒ Myth: Surgery is risky and often fails</h4>
+                <h4>Myth: Surgery is risky and often fails</h4>
                 <p><strong>Fact:</strong> Cataract surgery is common and restores vision for most people, but every surgery has risks. Ask the eye care team about benefits, risks, and timing for your case.</p>
             </div>
 
             <div class="myth-fact fact">
-                <h4>âœ… Fact: Early detection and treatment improve outcomes</h4>
+                <h4>Fact: Early detection and treatment improve outcomes</h4>
                 <p><strong>Why it matters:</strong> Detecting cataracts early allows your doctor to monitor progression and schedule surgery at the optimal time for best results.</p>
             </div>
 
             <div class="myth-fact fact">
-                <h4>âœ… Fact: Vision loss from cataracts is reversible</h4>
+                <h4>Fact: Vision loss from cataracts is reversible</h4>
                 <p><strong>Why it matters:</strong> Cataract-related clouding can usually be treated with surgery, but final vision also depends on the health of the retina, optic nerve, and the rest of the eye.</p>
             </div>
 
             <div class="myth-fact fact">
-                <h4>âœ… Fact: You can have both cataracts and other eye conditions</h4>
+                <h4>Fact: You can have both cataracts and other eye conditions</h4>
                 <p><strong>Why it matters:</strong> It's possible to have cataracts alongside glaucoma, macular degeneration, or other conditions. This is why comprehensive eye exams are important.</p>
             </div>
         </div>
@@ -273,16 +211,28 @@
             <p><a href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts" target="_blank" rel="noopener">Source: National Eye Institute diagnosis and symptom guidance</a></p>
         </div>
 
+        <div class="source-panel figma-secondary-source">
+            <h3>Verified Medical Sources</h3>
+            <p>This page was cross-checked against patient information from the National Eye Institute, Mayo Clinic, the World Health Organization, and the American Academy of Ophthalmology. Links open the original source pages.</p>
+            <div class="source-links">
+                <a class="source-button" href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts" target="_blank" rel="noopener">National Eye Institute</a>
+                <a class="source-button" href="https://www.mayoclinic.org/diseases-conditions/cataracts/symptoms-causes/syc-20353790" target="_blank" rel="noopener">Mayo Clinic: Symptoms & Causes</a>
+                <a class="source-button" href="https://www.mayoclinic.org/tests-procedures/cataract-surgery/about/pac-20384765" target="_blank" rel="noopener">Mayo Clinic: Surgery</a>
+                <a class="source-button" href="https://www.who.int/en/news-room/fact-sheets/detail/blindness-and-visual-impairment" target="_blank" rel="noopener">WHO Vision Impairment Fact Sheet</a>
+                <a class="source-button" href="https://store.aao.org/media/resources/051225/Cataract-Surgery_09-19.pdf" target="_blank" rel="noopener">AAO Cataract Surgery PDF</a>
+            </div>
+        </div>
+
         <div class="info-section callout-section">
             <h2>Ready for Treatment?</h2>
             <p>If you believe you have cataracts or have been diagnosed with cataracts, KitaKits can help you find a free or subsidized cataract surgery mission in your area.</p>
             <div class="action-spacer">
                 <a href="../index.php" class="btn-primary inline-flex-link">
-                    <span>ðŸ”</span>
                     Find Missions Near You
                 </a>
             </div>
         </div>
     </main>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

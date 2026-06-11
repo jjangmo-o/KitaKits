@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../app/config/db.php');
 require_once(__DIR__ . '/api/_auth.php');
+require_once(__DIR__ . '/includes/layout.php');
 
 if (current_patient_id()) {
     header('Location: pages/patient_portal.php');
@@ -13,125 +14,124 @@ if (current_patient_id()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KitaKits | Patient Access</title>
+    <title>KitaKits | Free Cataract Surgery Missions</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="entry-body make-ui">
-    <header class="entry-header">
-        <div class="entry-brand">
-            <img src="assets/images/logo.png" alt="KitaKits Logo">
-            <div>
-                <strong>KitaKits</strong>
-                <span>Free cataract surgery missions</span>
-            </div>
-        </div>
-        <nav class="entry-nav" aria-label="Patient resources">
-            <a href="pages/patient_guide.php">Patient Guide</a>
-            <a href="pages/faq.php">FAQ</a>
-            <a href="pages/about_cataracts.php">About Cataracts</a>
-        </nav>
-        <a href="admin/admin_dashboard.php" class="entry-admin-link">Admin</a>
-    </header>
+    <?php kk_render_header(['section' => 'root', 'active' => 'home']); ?>
 
     <main class="entry-shell">
-        <section class="entry-hero" aria-label="KitaKits patient access">
+        <!-- Hero Section -->
+        <section class="entry-hero" aria-label="KitaKits cataract surgery missions">
             <div class="entry-copy">
                 <span class="eyebrow">Free cataract surgery missions</span>
-                <h1>Restore your sight. No cost. No barriers.</h1>
-                <p>KitaKits connects patients across the Philippines with outreach programs. Log in to find a mission, book your slot, complete pre-screening, and print your confirmation slip.</p>
+                <h1>Restore your sight.<br><span>No cost. No barriers.</span></h1>
+                <p>KitaKits connects patients across the Philippines with free cataract surgery missions. Find a mission near you, book your slot, complete pre-screening, and regain your vision.</p>
                 <div class="entry-hero-actions">
-                    <a href="pages/login.php" class="entry-primary-action">Log In</a>
-                    <a href="pages/register.php" class="entry-secondary-action">Register</a>
-                </div>
-            </div>
-
-            <div class="entry-visual" aria-hidden="true">
-                <div class="entry-visual-top">
-                    <img src="assets/images/logo.png" alt="">
-                    <span>KK-2026-00002</span>
-                </div>
-                <div class="journey-line">
-                    <span class="journey-dot active"></span>
-                    <span class="journey-dot"></span>
-                    <span class="journey-dot"></span>
-                    <span class="journey-dot"></span>
-                </div>
-                <div class="journey-cards">
-                    <div class="journey-card active">
-                        <img src="assets/icons/book.png" alt="">
-                        <span>Find Mission</span>
-                    </div>
-                    <div class="journey-card">
-                        <img src="assets/icons/bookings.png" alt="">
-                        <span>Book Slot</span>
-                    </div>
-                    <div class="journey-card">
-                        <img src="assets/icons/guide.png" alt="">
-                        <span>Pre-screen</span>
-                    </div>
-                    <div class="journey-card">
-                        <img src="assets/icons/faq.png" alt="">
-                        <span>Print Slip</span>
-                    </div>
+                    <a href="#missions" class="entry-primary-action">Browse Open Missions</a>
+                    <a href="pages/about_cataracts.php" class="entry-secondary-action">Learn About Cataracts</a>
                 </div>
             </div>
         </section>
 
-        <section class="entry-actions-panel" aria-label="Patient login and signup">
-            <span class="eyebrow">Start here</span>
-            <h2>Patient access</h2>
-            <p>Bookings are created inside the Patient Portal after login.</p>
-            <div class="entry-panel-actions">
-                <a href="pages/login.php" class="entry-primary-action">Log In</a>
-                <a href="pages/register.php" class="entry-secondary-action">Sign Up</a>
-            </div>
-        </section>
-
-        <section class="entry-assurance" aria-label="Portal capabilities">
+        <!-- Trust Indicators -->
+        <section class="entry-assurance" aria-label="Why KitaKits">
             <div>
+                <span class="assurance-icon assurance-success">✓</span>
                 <strong>500+</strong>
-                <span>Successful surgery journeys supported by missions.</span>
+                <b>Successful Surgeries</b>
+                <span>Patients who regained their sight through our missions</span>
             </div>
             <div>
+                <span class="assurance-icon assurance-warning">◷</span>
                 <strong>20-30 min</strong>
-                <span>Typical outpatient surgery duration under local anesthesia.</span>
+                <b>Surgery Duration</b>
+                <span>Quick, safe outpatient procedure under local anesthesia</span>
             </div>
             <div>
+                <span class="assurance-icon assurance-info">♙</span>
                 <strong>15+</strong>
-                <span>Partner organizers and local medical teams.</span>
+                <b>Partner Organizers</b>
+                <span>Certified ophthalmologists and medical institutions</span>
             </div>
         </section>
 
+        <!-- Patient Resources Section -->
         <section class="entry-resources" aria-label="Patient resources">
             <div class="section-header">
                 <div>
-                    <span class="eyebrow">Patient resources</span>
-                    <h2>Everything you need before mission day</h2>
+                    <h2>Patient Resources</h2>
+                    <p style="margin-top: 8px; color: var(--ink-muted);">Everything you need before, during, and after your surgery</p>
                 </div>
             </div>
             <div class="resource-grid">
+                <a href="pages/my_bookings.php" class="resource-card">
+                    <img src="assets/icons/bookings.png" alt="">
+                    <strong>My Bookings</strong>
+                    <span>Retrieve and manage your booked surgery slots</span>
+                </a>
                 <a href="pages/patient_guide.php" class="resource-card">
                     <img src="assets/icons/guide.png" alt="">
                     <strong>Patient Guide</strong>
-                    <span>Before, during, and after surgery.</span>
+                    <span>Before, during, and after surgery — what to expect</span>
                 </a>
                 <a href="pages/faq.php" class="resource-card">
                     <img src="assets/icons/faq.png" alt="">
                     <strong>FAQ</strong>
-                    <span>Answers to common patient questions.</span>
+                    <span>Answers to the most common patient questions</span>
                 </a>
                 <a href="pages/about_cataracts.php" class="resource-card">
                     <img src="assets/icons/about.png" alt="">
                     <strong>About Cataracts</strong>
-                    <span>Symptoms, treatment, and recovery basics.</span>
-                </a>
-                <a href="pages/login.php" class="resource-card">
-                    <img src="assets/icons/bookings.png" alt="">
-                    <strong>My Bookings</strong>
-                    <span>Track status and print confirmed slips.</span>
+                    <span>Learn about cataracts, symptoms, and treatment</span>
                 </a>
             </div>
         </section>
+
+        <section id="missions" class="missions-browser" aria-label="Surgery missions">
+            <div class="section-header">
+                <div>
+                    <h2>Surgery Missions</h2>
+                    <p>Find available missions, compare slots, and reserve your surgery schedule.</p>
+                </div>
+            </div>
+
+            <form id="missionFilters" class="mission-filters" data-api-url="api/missions.php" data-page-prefix="pages/" data-asset-prefix="assets/">
+                <input type="search" name="q" placeholder="Search by organizer, location, or date...">
+                <select name="status" aria-label="Mission status">
+                    <option value="available">Open</option>
+                    <option value="all">All</option>
+                    <option value="full">Full</option>
+                </select>
+                <select name="sort" aria-label="Sort missions">
+                    <option value="date">Date</option>
+                    <option value="slots">Slots</option>
+                </select>
+                <button type="submit">Search</button>
+            </form>
+
+            <div id="missionsStatus" class="status-message" role="status" hidden></div>
+            <div id="missionsLoading" class="loading-state" role="status" aria-live="polite" hidden></div>
+            <div id="missionsEmptyState" class="empty-state" hidden>
+                <strong>No missions found</strong>
+                <span>Try adjusting your search or filter.</span>
+            </div>
+
+            <div id="availableMissions" class="mission-grid"></div>
+
+            <section id="fullyBookedSection" class="missions-browser-secondary" hidden>
+                <div class="section-header">
+                    <div>
+                        <h2>Fully Booked Missions</h2>
+                        <p>These missions are no longer accepting new booking requests.</p>
+                    </div>
+                </div>
+                <div id="fullyBookedMissions" class="mission-grid"></div>
+            </section>
+        </section>
     </main>
+    <?php kk_render_footer('root'); ?>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/missions.js"></script>
 </body>
 </html>

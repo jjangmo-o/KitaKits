@@ -1,6 +1,9 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
+// Ensure the page is served as UTF-8 to avoid character decoding issues
+header('Content-Type: text/html; charset=utf-8');
 $managed_content = [];
 
 try {
@@ -25,43 +28,51 @@ try {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Patient Surgery Guide</h1>
-                    <p>Complete guide for your cataract surgery mission experience</p>
-                </div>
-                <div class="header-actions" aria-label="Primary navigation">
-                    <nav class="header-nav">
-                        <a href="../index.php">Opening Page</a>
-                        <a href="login.php">Log In</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                        <a href="about_cataracts.php">About Cataracts</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+<body class="page-patient-guide">
+    <?php kk_render_header(['section' => 'pages', 'active' => 'guide']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Guide']]); ?>
 
     <main class="container">
-        <a href="../index.php" class="btn-back">
-            <span>â† </span>
-            Back to Missions
-        </a>
+        <a href="../index.php" class="btn-back">Back to Missions</a>
 
-        <div class="source-panel">
-            <h3>Guide Sources</h3>
-            <p>Preparation and recovery notes are general patient education, not a substitute for the mission team's instructions. Always follow the eye surgeon's specific instructions.</p>
-            <div class="source-links">
-                <a class="source-button" href="https://www.mayoclinic.org/tests-procedures/cataract-surgery/about/pac-20384765" target="_blank" rel="noopener">Mayo Clinic Cataract Surgery</a>
-                <a class="source-button" href="https://store.aao.org/media/resources/051225/Cataract-Surgery_09-19.pdf" target="_blank" rel="noopener">American Academy of Ophthalmology PDF</a>
-                <a class="source-button" href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts" target="_blank" rel="noopener">National Eye Institute Cataracts</a>
+        <section class="figma-page-intro">
+            <h1>Patient Guide</h1>
+            <p>Everything you need to know before, during, and after your free cataract surgery — in one place.</p>
+        </section>
+
+        <div class="guide-section guide-journey">
+            <div class="section-header">
+                <div>
+                    <h2>Your Surgery Journey</h2>
+                    <p>A step-by-step overview of the entire process</p>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Book Your Slot</h4>
+                    <p>Choose a mission and reserve your spot online. Save your contact number — you'll need it to retrieve your booking.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Pre-Op Preparation</h4>
+                    <p>Complete required lab tests (CBC, blood sugar). Stop blood thinners as instructed by your doctor.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Day Before</h4>
+                    <p>Fast starting midnight (or 6-8 hours prior), arrange your companion, and prepare all IDs and documents.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Arrival &amp; Screening</h4>
+                    <p>Arrive 30 minutes early. A medical team screens you and verifies your eligibility before surgery.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Surgery</h4>
+                    <p>Phacoemulsification takes 20-30 minutes under local anesthesia. You remain awake but completely pain-free.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Recovery &amp; Follow-up</h4>
+                    <p>Rest for 1-2 hours post-op. Follow up at 1 week and 1 month, and use all prescribed eye drops.</p>
+                </div>
             </div>
         </div>
 
@@ -79,40 +90,18 @@ try {
             </section>
         <?php endif; ?>
 
-        <div class="guide-section">
-            <h2>ðŸŽ¯ Getting Started</h2>
-            <p>Welcome to Kitakits! This guide will help you understand the entire process from booking to recovery after your cataract surgery mission. Follow these steps to ensure a smooth and successful experience.</p>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <h4>Step 1: Browse Missions</h4>
-                    <p>Go to our homepage and explore available cataract missions in your area. Check the date, location, and available slots.</p>
-                </div>
-                <div class="timeline-item">
-                    <h4>Step 2: View Mission Details</h4>
-                    <p>Click on a mission to view complete details including mission description, expectations, and what to bring.</p>
-                </div>
-                <div class="timeline-item">
-                    <h4>Step 3: Submit a Booking Request</h4>
-                    <p>Log in to the Patient Portal, choose a mission, and submit your details. Your request starts as booked, and the slot is secured only after admin confirmation.</p>
-                </div>
-                <div class="timeline-item">
-                    <h4>Step 4: Prepare for the Mission</h4>
-                    <p>Gather required documents, follow pre-surgery instructions, and arrange for someone to accompany you.</p>
-                </div>
-                <div class="timeline-item">
-                    <h4>Step 5: Attend the Mission</h4>
-                    <p>Arrive 30 minutes early, complete registration, undergo health screening, and have your surgery.</p>
-                </div>
-                <div class="timeline-item">
-                    <h4>Step 6: Recovery</h4>
-                    <p>Follow aftercare instructions, use prescribed eye drops, attend follow-up appointments, and enjoy your improved vision!</p>
-                </div>
+        <div class="source-panel figma-secondary-source">
+            <h3>Guide Sources</h3>
+            <p>Preparation and recovery notes are general patient education, not a substitute for the mission team's instructions. Always follow the eye surgeon's specific instructions.</p>
+            <div class="source-links">
+                <a class="source-button" href="https://www.mayoclinic.org/tests-procedures/cataract-surgery/about/pac-20384765" target="_blank" rel="noopener">Mayo Clinic Cataract Surgery</a>
+                <a class="source-button" href="https://store.aao.org/media/resources/051225/Cataract-Surgery_09-19.pdf" target="_blank" rel="noopener">American Academy of Ophthalmology PDF</a>
+                <a class="source-button" href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/cataracts" target="_blank" rel="noopener">National Eye Institute Cataracts</a>
             </div>
         </div>
 
         <div class="guide-section">
-            <h2>ðŸ“‹ What to Bring</h2>
+            <h2>What to Bring</h2>
             <h3>Essential Documents</h3>
             <ul class="checklist">
                 <li>Valid ID or identification document</li>
@@ -125,18 +114,18 @@ try {
             <ul class="checklist">
                 <li>Comfortable, clean clothing</li>
                 <li>Slippers or comfortable shoes (easy to put on/remove)</li>
-                <li>Sunglasses (for after surgeryâ€”light sensitivity is common)</li>
+                <li>Sunglasses (for after surgery - light sensitivity is common)</li>
                 <li>A small bag for your belongings</li>
             </ul>
 
             <div class="warning-box">
-                <h4>âš ï¸ Important</h4>
+                <h4>Important</h4>
                 <p>Bring someone with you to accompany you home. You won't be able to drive immediately after surgery due to anesthesia and eye drops.</p>
             </div>
         </div>
 
         <div class="guide-section">
-            <h2>âœ… Before the Mission</h2>
+            <h2>Before the Mission</h2>
 
             <h3>1-2 Weeks Before</h3>
             <ul class="checklist">
@@ -160,7 +149,7 @@ try {
                 <li>Get good rest</li>
                 <li>Wash your hair (you may not be able to for a few days after surgery)</li>
                 <li>Lay out comfortable clothing</li>
-                <li>Prepare your companionâ€”inform them about the timeline</li>
+                <li>Prepare your companion - inform them about the timeline</li>
                 <li>Set multiple alarms for the morning</li>
             </ul>
 
@@ -175,13 +164,13 @@ try {
             </ul>
 
             <div class="tip-box">
-                <h4>ðŸ’¡ Pro Tip</h4>
+                <h4>Pro Tip</h4>
                 <p>Set a reminder on your phone with all mission details. Take a screenshot of your booking confirmation for easy reference.</p>
             </div>
         </div>
 
         <div class="guide-section">
-            <h2>ðŸ¥ At the Mission</h2>
+            <h2>At the Mission</h2>
 
             <h3>Upon Arrival (30 minutes before scheduled time)</h3>
             <ul class="checklist">
@@ -206,7 +195,7 @@ try {
                 <li>Remove jewelry, watches, and valuables</li>
                 <li>Use the restroom before being called to the operating room</li>
                 <li>Take prescribed pre-surgery medications if given</li>
-                <li>Stay calmâ€”the medical team is experienced and ready to help</li>
+                <li>Stay calm - the medical team is experienced and ready to help</li>
             </ul>
 
             <h3>During Surgery</h3>
@@ -229,7 +218,7 @@ try {
         </div>
 
         <div class="guide-section">
-            <h2>ðŸ  Recovery at Home</h2>
+            <h2>Recovery at Home</h2>
 
             <h3>First 24 Hours</h3>
             <ul class="checklist">
@@ -274,7 +263,7 @@ try {
 
             <div class="dos-donts">
                 <div class="do-box">
-                    <h4>âœ… DO</h4>
+                    <h4>DO</h4>
                     <ul>
                         <li>Use prescribed eye drops exactly</li>
                         <li>Protect your eye from dust and injury</li>
@@ -285,7 +274,7 @@ try {
                     </ul>
                 </div>
                 <div class="dont-box">
-                    <h4>âŒ DON'T</h4>
+                    <h4>DON'T</h4>
                     <ul>
                         <li>Rub or press on your eye</li>
                         <li>Get water in your eye</li>
@@ -304,7 +293,7 @@ try {
         </div>
 
         <div class="guide-section">
-            <h2>âš ï¸ Warning Signs</h2>
+            <h2>Warning Signs</h2>
             <p>Contact your doctor immediately if you experience any of the following:</p>
             <ul class="checklist">
                 <li>Sudden or severe eye pain</li>
@@ -317,14 +306,14 @@ try {
             </ul>
 
             <div class="warning-box">
-                <h4>ðŸš¨ Emergency</h4>
-                <p>If you experience sudden vision loss, severe pain, or bleeding, go to the nearest hospital emergency room immediately. Don't delayâ€”these could indicate serious complications requiring urgent attention.</p>
+                <h4>Emergency</h4>
+                <p>If you experience sudden vision loss, severe pain, or bleeding, go to the nearest hospital emergency room immediately. Don't delay - these could indicate serious complications requiring urgent attention.</p>
             </div>
             <p><a href="https://www.mayoclinic.org/tests-procedures/cataract-surgery/about/pac-20384765" target="_blank" rel="noopener">Source: Mayo Clinic post-surgery warning signs</a></p>
         </div>
 
         <div class="guide-section">
-            <h2>ðŸŽ‰ What to Expect After Recovery</h2>
+            <h2>What to Expect After Recovery</h2>
             <p>After successful cataract surgery and recovery, many patients experience:</p>
             <ul class="checklist">
                 <li>Clearer vision</li>
@@ -335,21 +324,22 @@ try {
             </ul>
 
             <div class="tip-box">
-                <h4>ðŸ’¡ Remember</h4>
+                <h4>Remember</h4>
                 <p>You may need glasses at least some of the time after cataract surgery. Your doctor will tell you when your eye has healed enough for a final eyeglass prescription.</p>
             </div>
         </div>
 
         <div class="guide-section callout-section">
-            <h2>ðŸ“ž Need Help?</h2>
+            <h2>Need Help?</h2>
             <p>If you have additional questions:</p>
             <ul class="checklist">
                 <li>Check our <a href="faq.php" class="guide-link">FAQ page</a> for common questions</li>
                 <li>Contact the mission organizer directly with specific questions</li>
                 <li>Talk to the medical team during your visits</li>
-                <li>Don't hesitate to askâ€”your health and safety are our priority</li>
+                <li>Don't hesitate to ask - your health and safety are our priority</li>
             </ul>
         </div>
     </main>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 if (current_admin_user()) {
     header('Location: admin_dashboard.php');
@@ -30,20 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Admin Login | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="admin-body">
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-content">
-                <h1>Admin Login</h1>
-                <p>Role-based access for coordinators</p>
-            </div>
-        </div>
-    </header>
+<body class="auth-page-body">
+    <?php kk_render_header(['section' => 'admin', 'active' => 'login']); ?>
+    <?php kk_render_breadcrumbs('admin', [['label' => 'Admin Login']]); ?>
 
-    <main class="container auth-container form-workspace">
+    <main class="auth-page-main">
+        <section class="auth-page-heading">
+            <h1>Welcome back</h1>
+            <p>Log in to manage missions, bookings, patients, and content.</p>
+        </section>
+
+        <section class="auth-card figma-auth-card" aria-label="Admin login">
         <a href="../index.php" class="btn-back">
             <span>&larr; </span>
             Back to Patient Page
@@ -53,13 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="" class="auth-form">
+        <form method="POST" action="">
             <label for="email">Admin Email</label>
             <input
                 type="email"
                 id="email"
                 name="email"
-                value="<?php echo htmlspecialchars($_POST['email'] ?? 'admin@kitakits.local'); ?>"
+                value="<?php echo htmlspecialchars($_POST['email'] ?? 'admin@kitakits.ph'); ?>"
+                placeholder="admin@kitakits.ph"
+                autocomplete="username"
                 required
             >
 
@@ -68,14 +68,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 type="password"
                 id="password"
                 name="password"
-                placeholder="admin123"
+                placeholder="admin2025"
+                autocomplete="current-password"
                 required
             >
 
-            <button type="submit">Log In</button>
+            <button type="submit" class="btn-primary auth-submit">Log In</button>
 
-            <p class="form-hint">Demo admin: admin@kitakits.local / admin123</p>
+            <p class="form-hint">Demo admin: admin@kitakits.ph / admin2025</p>
         </form>
+        </section>
+
+        <section class="demo-credentials" aria-label="Demo credentials">
+            <strong>Demo credentials</strong>
+            <span>Admin: admin@kitakits.ph / admin2025</span>
+            <span>Legacy local: admin@kitakits.local / admin123</span>
+        </section>
     </main>
+
+    <?php kk_render_footer('admin', ['mode' => 'public']); ?>
 </body>
 </html>

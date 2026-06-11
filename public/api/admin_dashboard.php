@@ -126,6 +126,15 @@ try {
 
     $totals = [
         'missions' => count($mission_rows),
+        'accepting_missions' => count(array_filter($mission_rows, function ($mission) {
+            return $mission['mission_status'] === 'open' && $mission['available_slots'] > 0;
+        })),
+        'full_missions' => count(array_filter($mission_rows, function ($mission) {
+            return $mission['mission_status'] === 'closed' || $mission['available_slots'] <= 0;
+        })),
+        'completed_missions' => count(array_filter($mission_rows, function ($mission) {
+            return $mission['mission_status'] === 'completed';
+        })),
         'bookings' => array_sum(array_column($mission_rows, 'total_bookings')),
         'confirmed_headcount' => array_sum(array_column($mission_rows, 'confirmed_headcount')),
         'completed' => array_sum(array_column($mission_rows, 'completed_count')),

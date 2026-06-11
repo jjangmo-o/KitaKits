@@ -13,6 +13,7 @@
     const bookingMissionFilter = document.getElementById('bookingMissionFilter');
     const loading = document.getElementById('adminLoading');
     const status = document.getElementById('adminStatus');
+    const adminToken = new URLSearchParams(window.location.search).get('admin_token') || '';
 
     if (!missionsBody || !bookingsBody) {
         return;
@@ -23,49 +24,57 @@
         return `<span class="status-pill status-${escapeHtml(normalized)}">${escapeHtml(value || 'unknown')}</span>`;
     }
 
+    function adminUrl(path) {
+        if (!adminToken) {
+            return path;
+        }
+
+        const [base, queryString = ''] = path.split('?');
+        const params = new URLSearchParams(queryString);
+        params.set('admin_token', adminToken);
+        return `${base}?${params.toString()}`;
+    }
+
     function renderAnalytics(summary) {
         const cards = [
-            ['Missions', summary.missions],
-            ['Bookings', summary.bookings],
-            ['Confirmed Headcount', summary.confirmed_headcount],
-            ['Completed Cases', summary.completed],
-            ['Patients', summary.patients]
+            ['Accepting', summary.accepting_missions || 0, 'success'],
+            ['Full', summary.full_missions || 0, 'warning'],
+            ['Completed', summary.completed_missions || summary.completed || 0, 'muted']
         ];
 
-        analyticsCards.innerHTML = cards.map(([label, value]) => `
+        analyticsCards.innerHTML = cards.map(([label, value, variant]) => `
             <div class="analytics-card">
-                <span>${escapeHtml(label)}</span>
                 <strong>${escapeHtml(value)}</strong>
+                <span class="summary-chip summary-${escapeHtml(variant)}">${escapeHtml(label)}</span>
             </div>
         `).join('');
     }
 
     function renderMissionRow(mission) {
+        const totalSlots = Number(mission.total_slots || 0);
+        const availableSlots = Number(mission.available_slots || 0);
+        const percent = totalSlots > 0 ? Math.max(0, Math.min(100, (availableSlots / totalSlots) * 100)) : 0;
         return `
             <tr>
-                <td>${escapeHtml(mission.mission_id)}</td>
                 <td>
                     <strong>${escapeHtml(mission.mission_name)}</strong>
                     <span class="table-subtext">${escapeHtml(mission.organizer_name)}</span>
                 </td>
-                <td>${escapeHtml(mission.mission_date_short)}</td>
-                <td>${escapeHtml(mission.city_area)}</td>
-                <td>${statusPill(mission.mission_status)}</td>
-                <td>${escapeHtml(mission.available_slots)} / ${escapeHtml(mission.total_slots)}</td>
                 <td>
-                    ${escapeHtml(mission.total_bookings)}
-                    <span class="table-subtext">${escapeHtml(mission.confirmed_count)} confirmed</span>
+                    ${escapeHtml(mission.mission_date_short)}
+                    <span class="table-subtext">${escapeHtml(mission.start_time || '')}${mission.end_time ? ` - ${escapeHtml(mission.end_time)}` : ''}</span>
                 </td>
-                <td>${escapeHtml(mission.completion_rate)}%</td>
+                <td>${escapeHtml(mission.city_area || mission.location)}</td>
+                <td>
+                    <span class="slot-count">${escapeHtml(mission.available_slots)} <span>/ ${escapeHtml(mission.total_slots)}</span></span>
+                    <div class="admin-slot-meter"><span style="width:${percent}%"></span></div>
+                </td>
+                <td>${statusPill(mission.mission_status)}</td>
                 <td class="table-actions">
-                    <a href="edit_mission.php?id=${encodeURIComponent(mission.mission_id)}" class="btn-edit">
-                        <img src="../assets/icons/edit.png" alt="" class="btn-icon">
+                    <a href="../pages/mission_details.php?id=${encodeURIComponent(mission.mission_id)}" class="btn-secondary compact-button">View</a>
+                    <a href="edit_mission.php?id=${encodeURIComponent(mission.mission_id)}" class="btn-secondary compact-button">
                         Edit
                     </a>
-                    <button type="button" class="btn-delete" data-delete-mission data-id="${escapeHtml(mission.mission_id)}">
-                        <img src="../assets/icons/delete.png" alt="" class="btn-icon">
-                        Delete
-                    </button>
                 </td>
             </tr>
         `;
@@ -178,13 +187,17 @@
 
         try {
             const query = dashboardQuery();
-            const payload = await fetchJson(`../api/admin_dashboard.php${query ? `?${query}` : ''}`);
+            const payload = await fetchJson(adminUrl(`../api/admin_dashboard.php${query ? `?${query}` : ''}`));
             const missions = payload.data.missions || [];
             const bookings = payload.data.bookings || [];
             const patients = payload.data.patients || [];
             const pages = payload.data.content_pages || [];
 
             renderAnalytics(payload.data.summary || {});
+            const missionTotal = document.getElementById('adminMissionTotal');
+            if (missionTotal) {
+                missionTotal.textContent = missions.length;
+            }
             syncMissionFilter(missions);
             missionsBody.innerHTML = missions.map(renderMissionRow).join('');
             bookingsBody.innerHTML = bookings.map(renderBookingRow).join('');
@@ -195,7 +208,7 @@
             bookingsEmpty.hidden = bookings.length > 0;
             patientsEmpty.hidden = patients.length > 0;
 
-            setStatus(status, message || `Loaded ${missions.length} mission(s), ${bookings.length} booking(s), and ${patients.length} patient(s).`, 'success');
+            setStatus(status, message || '');
         } catch (error) {
             setStatus(status, error.message || 'Unable to load admin dashboard.', 'error');
         } finally {
@@ -217,7 +230,7 @@
         button.disabled = true;
 
         try {
-            const payload = await fetchJson(`../api/delete_mission.php?id=${encodeURIComponent(button.dataset.id)}`, {
+            const payload = await fetchJson(adminUrl(`../api/delete_mission.php?id=${encodeURIComponent(button.dataset.id)}`), {
                 method: 'DELETE'
             });
             await loadDashboard(payload.message);
@@ -242,7 +255,7 @@
             body.set('coordinator_notes', notes);
 
             try {
-                const payload = await fetchJson('../api/pre_screening.php', {
+                const payload = await fetchJson(adminUrl('../api/pre_screening.php'), {
                     method: 'POST',
                     body
                 });
@@ -269,7 +282,7 @@
         statusButton.disabled = true;
 
         try {
-            const payload = await fetchJson('../api/update_booking_status.php', {
+            const payload = await fetchJson(adminUrl('../api/update_booking_status.php'), {
                 method: 'POST',
                 body
             });
@@ -290,7 +303,7 @@
         event.preventDefault();
 
         try {
-            const payload = await fetchJson('../api/content_pages.php', {
+            const payload = await fetchJson(adminUrl('../api/content_pages.php'), {
                 method: 'POST',
                 body: new FormData(form)
             });

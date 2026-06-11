@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_schema_helpers.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 function normalize_contact_number($contact)
 {
@@ -171,29 +172,10 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Book Your Surgery Slot</h1>
-                    <p>Reserve your spot at the cataract mission</p>
-                </div>
-                <div class="header-actions" aria-label="Primary navigation">
-                    <nav class="header-nav">
-                        <a href="patient_portal.php">Patient Portal</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                        <a href="about_cataracts.php">About Cataracts</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Book Slot']]); ?>
 
-    <div class="container">
+    <main class="container">
         <a href="patient_portal.php#portal-missions" class="btn-back">
             <span>&larr; </span>
             Back to Portal Missions
@@ -366,7 +348,8 @@ if (isset($_POST['submit'])) {
                 <li>If you cannot attend, please notify the organizer as soon as possible</li>
             </ul>
         </div>
-    </div>
+    </main>
+    <?php kk_render_footer('pages'); ?>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/book-slot.js"></script>
 </body>

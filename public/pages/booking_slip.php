@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_validation.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 $booking_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $contact = normalize_contact_number($_GET['contact'] ?? '');
@@ -74,37 +75,19 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
     <title>Booking Slip | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
-    <header class="no-print">
-        <div class="container">
-            <div class="header-logo">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-            </div>
-            <div class="header-main">
-                <div class="header-content">
-                    <h1>Booking Confirmation Slip</h1>
-                    <p>Printable mission-day reference</p>
-                </div>
-                <div class="header-actions">
-                    <nav class="header-nav">
-                        <a href="patient_portal.php">Patient Portal</a>
-                        <a href="patient_guide.php">Patient Guide</a>
-                        <a href="faq.php">FAQ</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+<body class="page-booking-confirmation">
+    <?php kk_render_header(['section' => 'pages', 'active' => 'my_bookings', 'no_print' => true]); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Booking Confirmation', 'href' => 'my_bookings.php'], ['label' => $slip['booking_reference']]], ['no_print' => true]); ?>
 
     <main class="container slip-container">
         <div class="no-print slip-actions">
-            <a href="<?php echo htmlspecialchars($back_url); ?>" class="btn-back">
-                <span>&larr; </span>
-                Back
-            </a>
-            <?php if ($slip['booking_status'] === 'confirmed'): ?>
-                <button type="button" class="btn-primary compact-button" onclick="window.print()">Print This Slip</button>
-            <?php endif; ?>
+            <a href="<?php echo htmlspecialchars($back_url); ?>" class="btn-back">Back</a>
+            <div class="slip-action-group">
+                <a href="my_bookings.php" class="btn-secondary compact-button">My Bookings</a>
+                <?php if ($slip['booking_status'] === 'confirmed'): ?>
+                    <button type="button" class="btn-primary compact-button" onclick="window.print()">Print Slip</button>
+                <?php endif; ?>
+            </div>
         </div>
 
         <?php if ($slip['booking_status'] !== 'confirmed'): ?>
@@ -117,46 +100,56 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
             <div class="slip-header">
                 <img src="../assets/images/logo.png" alt="KitaKits Logo">
                 <div>
-                    <h1>KitaKits Confirmation Slip</h1>
-                    <p>Reference: <strong><?php echo htmlspecialchars($slip['booking_reference']); ?></strong></p>
+                    <h1>KitaKits</h1>
+                    <p>Free Cataract Surgery Missions</p>
+                </div>
+                <div class="slip-reference">
+                    <span>Booking Confirmation</span>
+                    <strong><?php echo htmlspecialchars($slip['booking_reference']); ?></strong>
                 </div>
             </div>
 
             <div class="slip-status">
-                Booking Status: <strong><?php echo htmlspecialchars(strtoupper($slip['booking_status'])); ?></strong>
+                <span>Booking status</span>
+                <strong><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $slip['booking_status']))); ?></strong>
             </div>
 
+            <h2>Mission Information</h2>
             <div class="slip-grid">
                 <div>
-                    <span>Mission</span>
-                    <strong><?php echo htmlspecialchars($slip['mission_name']); ?></strong>
+                    <span>Organizer</span>
+                    <strong><?php echo htmlspecialchars($slip['organizer_name']); ?></strong>
                 </div>
                 <div>
                     <span>Date</span>
                     <strong><?php echo date('F j, Y', strtotime($slip['mission_date'])); ?></strong>
                 </div>
                 <div>
-                    <span>Organizer</span>
-                    <strong><?php echo htmlspecialchars($slip['organizer_name']); ?></strong>
+                    <span>Time</span>
+                    <strong><?php echo date('g:i A', strtotime($slip['start_time'])); ?> - <?php echo date('g:i A', strtotime($slip['end_time'])); ?></strong>
                 </div>
                 <div>
                     <span>Venue / Address</span>
                     <strong><?php echo htmlspecialchars($slip['full_address']); ?></strong>
                 </div>
+            </div>
+
+            <h2>Patient Information</h2>
+            <div class="slip-grid">
                 <div>
-                    <span>Patient</span>
+                    <span>Patient Name</span>
                     <strong><?php echo htmlspecialchars($slip['patient_name']); ?></strong>
                 </div>
                 <div>
-                    <span>Contact</span>
+                    <span>Contact Number</span>
                     <strong><?php echo htmlspecialchars($slip['contact_number']); ?></strong>
                 </div>
                 <div>
-                    <span>Companions</span>
-                    <strong><?php echo htmlspecialchars($slip['companion_count']); ?></strong>
+                    <span>Affected Eye</span>
+                    <strong>Both</strong>
                 </div>
                 <div>
-                    <span>Total Headcount</span>
+                    <span>Companion</span>
                     <strong><?php echo htmlspecialchars($slip['total_headcount']); ?></strong>
                 </div>
             </div>
@@ -172,5 +165,6 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
             </div>
         </section>
     </main>
+    <?php kk_render_footer('pages', ['no_print' => true]); ?>
 </body>
 </html>

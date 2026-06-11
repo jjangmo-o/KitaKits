@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../includes/layout.php');
 
 if (current_patient_id()) {
     header('Location: patient_portal.php');
@@ -13,12 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifier = trim($_POST['identifier'] ?? '');
     $password = (string)($_POST['password'] ?? '');
 
+    if (attempt_admin_login($identifier, $password)) {
+        header('Location: ../admin/admin_dashboard.php');
+        exit();
+    }
+
     if (attempt_patient_login($identifier, $password)) {
         header('Location: patient_portal.php');
         exit();
     }
 
-    $error = 'We could not sign you in. Check your email or contact number and password.';
+    $error = 'Incorrect email, contact number, or password. Please try again.';
 }
 ?>
 
@@ -31,24 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="auth-page-body">
-    <header class="site-header">
-        <div class="container site-header-inner">
-            <a href="../index.php" class="site-brand">
-                <img src="../assets/images/logo.png" alt="KitaKits Logo">
-                <span>KitaKits</span>
-            </a>
-            <nav class="site-nav" aria-label="Patient navigation">
-                <a href="../index.php">Home</a>
-                <a href="patient_guide.php">Patient Guide</a>
-                <a href="faq.php">FAQ</a>
-                <a href="about_cataracts.php">About Cataracts</a>
-            </nav>
-            <div class="site-actions">
-                <a href="login.php" class="site-link-active">Log In</a>
-                <a href="register.php" class="site-primary">Register</a>
-            </div>
-        </div>
-    </header>
+    <?php kk_render_header(['section' => 'pages', 'active' => 'login']); ?>
+    <?php kk_render_breadcrumbs('pages', [['label' => 'Log In']]); ?>
 
     <main class="auth-page-main">
         <section class="auth-page-heading">
@@ -56,61 +46,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>Log in to manage your bookings and profile.</p>
         </section>
 
-        <section class="auth-card figma-auth-card" aria-label="Patient login">
-            <div class="auth-card-header">
-                <span class="eyebrow">Patient login</span>
-                <h2>Sign in</h2>
-                <p>Use the email or contact number connected to your patient record.</p>
-            </div>
-
+        <section class="auth-card figma-auth-card" aria-label="Login">
             <?php if ($error): ?>
                 <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <form method="POST" action="">
-                <label for="identifier">Email or Contact Number</label>
+                <label for="identifier">Email address</label>
                 <input
                     type="text"
                     id="identifier"
                     name="identifier"
                     value="<?php echo htmlspecialchars($_POST['identifier'] ?? ''); ?>"
-                    placeholder="e.g., 09111111111"
+                    placeholder="you@example.com"
                     autocomplete="username"
                     required
                 >
 
                 <label for="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    autocomplete="current-password"
-                    required
-                >
+                <div class="password-field">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                        required
+                    >
+                    <button type="button" aria-label="Show password" tabindex="-1">⊙</button>
+                </div>
 
                 <button type="submit" class="btn-primary auth-submit">Log In</button>
             </form>
 
             <div class="auth-switch">
-                <span>No login details yet?</span>
-                <a href="register.php">Sign up</a>
+                <span>Don't have an account?</span>
+                <a href="register.php">Register here</a>
             </div>
-
-            <p class="inline-note auth-note">Demo patient: 09111111111 / patient123</p>
         </section>
 
         <section class="demo-credentials" aria-label="Demo credentials">
             <strong>Demo credentials</strong>
-            <span>Patient: 09111111111 / patient123</span>
-            <span>Admin: admin@kitakits.local / admin123</span>
+            <span>Patient: <b>maria@example.com / password123</b></span>
+            <span>Admin: <b>admin@kitakits.ph / admin2025</b></span>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <strong>KitaKits</strong>
-            <span>Connecting patients with free cataract surgery missions across the Philippines.</span>
-        </div>
-    </footer>
+    <?php kk_render_footer('pages'); ?>
 </body>
 </html>

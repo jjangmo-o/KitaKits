@@ -131,11 +131,11 @@ function checked($intake, $field)
     <title>Pre-screening | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="page-pre-screening">
     <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
     <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Pre-screening']]); ?>
 
-    <main class="container">
+    <main class="container workflow-page workflow-form-page">
         <a href="patient_portal.php#portal-bookings" class="btn-back">
             <span>&larr; </span>
             Back to Portal Bookings
@@ -148,42 +148,77 @@ function checked($intake, $field)
             <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
 
-        <div class="booking-summary">
-            <strong>Patient:</strong> <?php echo htmlspecialchars($booking['patient_name']); ?><br>
-            <strong>Mission:</strong> <?php echo htmlspecialchars($booking['mission_name']); ?><br>
-            <strong>Date:</strong> <?php echo date('F j, Y', strtotime($booking['mission_date'])); ?><br>
-            <strong>Address:</strong> <?php echo htmlspecialchars($booking['full_address']); ?>
-        </div>
+        <section class="workflow-hero workflow-hero-compact">
+            <span class="workflow-hero-icon" aria-hidden="true">
+                <img src="../assets/icons/shield-check.svg" alt="">
+            </span>
+            <div>
+                <span class="workflow-kicker">Health information</span>
+                <h1>Pre-screening Form</h1>
+                <p>Help the medical team prepare by sharing relevant conditions and medications.</p>
+            </div>
+        </section>
 
-        <form method="POST" action="" class="intake-form">
+        <div class="workflow-form-layout">
+        <aside class="booking-summary workflow-summary-card">
+            <div class="workflow-card-heading">
+                <img src="../assets/icons/calendar-purple.svg" alt="" aria-hidden="true">
+                <div><h2>Appointment</h2><p>Booking connected to this form</p></div>
+            </div>
+            <dl class="workflow-summary-list">
+                <div><dt>Patient</dt><dd><?php echo htmlspecialchars($booking['patient_name']); ?></dd></div>
+                <div><dt>Mission</dt><dd><?php echo htmlspecialchars($booking['mission_name']); ?></dd></div>
+                <div><dt>Date</dt><dd><?php echo date('F j, Y', strtotime($booking['mission_date'])); ?></dd></div>
+                <div><dt>Address</dt><dd><?php echo htmlspecialchars($booking['full_address']); ?></dd></div>
+            </dl>
+            <div class="workflow-privacy-note">
+                <img src="../assets/icons/info.svg" alt="" aria-hidden="true">
+                <span>This form supports coordinator review and does not replace an examination by a physician.</span>
+            </div>
+        </aside>
+
+        <form method="POST" action="" class="intake-form workflow-form-card">
+            <div class="workflow-card-heading">
+                <img src="../assets/icons/eye-purple.svg" alt="" aria-hidden="true">
+                <div><h2>Medical Questionnaire</h2><p>Select every condition that currently applies.</p></div>
+            </div>
             <fieldset>
                 <legend>Medical Conditions</legend>
-                <label class="checkbox-row"><input type="checkbox" name="has_diabetes" value="1" <?php echo checked($intake, 'has_diabetes'); ?>> Diabetes</label>
-                <label class="checkbox-row"><input type="checkbox" name="has_hypertension" value="1" <?php echo checked($intake, 'has_hypertension'); ?>> Hypertension</label>
-                <label class="checkbox-row"><input type="checkbox" name="has_heart_disease" value="1" <?php echo checked($intake, 'has_heart_disease'); ?>> Heart disease</label>
-                <label class="checkbox-row"><input type="checkbox" name="has_asthma" value="1" <?php echo checked($intake, 'has_asthma'); ?>> Asthma</label>
-                <label class="checkbox-row"><input type="checkbox" name="has_bleeding_disorder" value="1" <?php echo checked($intake, 'has_bleeding_disorder'); ?>> Bleeding disorder</label>
-                <label class="checkbox-row"><input type="checkbox" name="has_fever_or_infection" value="1" <?php echo checked($intake, 'has_fever_or_infection'); ?>> Fever or infection</label>
-                <label class="checkbox-row"><input type="checkbox" name="is_pregnant" value="1" <?php echo checked($intake, 'is_pregnant'); ?>> Pregnant</label>
-                <label class="checkbox-row"><input type="checkbox" name="previous_eye_surgery" value="1" <?php echo checked($intake, 'previous_eye_surgery'); ?>> Previous eye surgery</label>
+                <div class="condition-grid">
+                    <label class="checkbox-row"><input type="checkbox" name="has_diabetes" value="1" <?php echo checked($intake, 'has_diabetes'); ?>> Diabetes</label>
+                    <label class="checkbox-row"><input type="checkbox" name="has_hypertension" value="1" <?php echo checked($intake, 'has_hypertension'); ?>> Hypertension</label>
+                    <label class="checkbox-row"><input type="checkbox" name="has_heart_disease" value="1" <?php echo checked($intake, 'has_heart_disease'); ?>> Heart disease</label>
+                    <label class="checkbox-row"><input type="checkbox" name="has_asthma" value="1" <?php echo checked($intake, 'has_asthma'); ?>> Asthma</label>
+                    <label class="checkbox-row"><input type="checkbox" name="has_bleeding_disorder" value="1" <?php echo checked($intake, 'has_bleeding_disorder'); ?>> Bleeding disorder</label>
+                    <label class="checkbox-row"><input type="checkbox" name="has_fever_or_infection" value="1" <?php echo checked($intake, 'has_fever_or_infection'); ?>> Fever or infection</label>
+                    <label class="checkbox-row"><input type="checkbox" name="is_pregnant" value="1" <?php echo checked($intake, 'is_pregnant'); ?>> Pregnant</label>
+                    <label class="checkbox-row"><input type="checkbox" name="previous_eye_surgery" value="1" <?php echo checked($intake, 'previous_eye_surgery'); ?>> Previous eye surgery</label>
+                </div>
             </fieldset>
 
+            <div class="intake-notes-grid">
+            <div>
             <label for="allergies">Allergies</label>
             <textarea id="allergies" name="allergies" rows="3"><?php echo htmlspecialchars($intake['allergies'] ?? ''); ?></textarea>
-
+            </div><div>
             <label for="current_medications">Current Medications</label>
             <textarea id="current_medications" name="current_medications" rows="3"><?php echo htmlspecialchars($intake['current_medications'] ?? ''); ?></textarea>
-
+            </div><div class="intake-notes-wide">
             <label for="other_conditions">Other Conditions</label>
             <textarea id="other_conditions" name="other_conditions" rows="3"><?php echo htmlspecialchars($intake['other_conditions'] ?? ''); ?></textarea>
+            </div></div>
 
             <label class="checkbox-row consent-row">
                 <input type="checkbox" name="consent_to_share" value="1" <?php echo checked($intake, 'consent_to_share'); ?> required>
                 I consent to share these details with mission coordinators for pre-screening review.
             </label>
 
-            <button type="submit">Save Pre-screening</button>
+            <button type="submit">
+                <img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true">
+                <span>Save Pre-screening</span>
+            </button>
         </form>
+        </div>
     </main>
     <?php kk_render_footer('pages'); ?>
 </body>

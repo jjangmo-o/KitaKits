@@ -17,20 +17,21 @@ if ($method === 'GET') {
 
     $is_admin = current_admin_user() || request_admin_token_is_valid();
 
-    if (!$is_admin && ($contact === '' || !contact_number_is_valid($contact))) {
-        json_error('A valid contact number is required.', 422);
+    $patient_id = current_patient_id();
+    if (!$is_admin && !$patient_id) {
+        json_error('Patient authentication required.', 401);
     }
 
     try {
         $sql = "SELECT i.*, b.contact_number
                 FROM medical_intake_forms i
                 JOIN bookings b ON b.booking_id = i.booking_id
-                WHERE i.booking_id = :booking_id" . ($is_admin ? "" : " AND b.contact_number = :contact") . "
+                WHERE i.booking_id = :booking_id" . ($is_admin ? "" : " AND b.patient_id = :patient_id") . "
                 LIMIT 1";
         $stmt = $conn->prepare($sql);
         $params = [':booking_id' => $booking_id];
         if (!$is_admin) {
-            $params[':contact'] = $contact;
+            $params[':patient_id'] = $patient_id;
         }
         $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -92,18 +93,19 @@ if ($action === 'review') {
     }
 }
 
-if ($contact === '' || !contact_number_is_valid($contact)) {
-    json_error('A valid contact number is required.', 422);
+$patient_id = current_patient_id();
+if (!$patient_id) {
+    json_error('Patient authentication required.', 401);
 }
 
 try {
     $booking = $conn->prepare("SELECT booking_id, patient_id, mission_id
                                FROM bookings
-                               WHERE booking_id = :booking_id AND contact_number = :contact
+                               WHERE booking_id = :booking_id AND patient_id = :patient_id
                                LIMIT 1");
     $booking->execute([
         ':booking_id' => $booking_id,
-        ':contact' => $contact
+        ':patient_id' => $patient_id
     ]);
     $booking_row = $booking->fetch(PDO::FETCH_ASSOC);
 

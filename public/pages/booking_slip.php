@@ -5,7 +5,6 @@ require_once(__DIR__ . '/../api/_auth.php');
 require_once(__DIR__ . '/../includes/layout.php');
 
 $booking_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$contact = normalize_contact_number($_GET['contact'] ?? '');
 $patient_id = current_patient_id();
 
 if ($booking_id <= 0) {
@@ -13,26 +12,16 @@ if ($booking_id <= 0) {
     exit();
 }
 
-if ($contact !== '' && !contact_number_is_valid($contact)) {
+if (!$patient_id) {
     header('Location: login.php');
     exit();
 }
 
-if ($contact === '' && !$patient_id) {
-    header('Location: login.php');
-    exit();
-}
-
-$where = 'b.booking_id = :booking_id';
-$params = [':booking_id' => $booking_id];
-
-if ($contact !== '') {
-    $where .= ' AND b.contact_number = :contact';
-    $params[':contact'] = $contact;
-} else {
-    $where .= ' AND b.patient_id = :patient_id';
-    $params[':patient_id'] = $patient_id;
-}
+$where = 'b.booking_id = :booking_id AND b.patient_id = :patient_id';
+$params = [
+    ':booking_id' => $booking_id,
+    ':patient_id' => $patient_id
+];
 
 $stmt = $conn->prepare("SELECT b.booking_id,
                                b.booking_reference,
@@ -110,11 +99,12 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
             </div>
 
             <div class="slip-status">
+                <img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true">
                 <span>Booking status</span>
                 <strong><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $slip['booking_status']))); ?></strong>
             </div>
 
-            <h2>Mission Information</h2>
+            <h2 class="slip-section-title"><img src="../assets/icons/calendar-purple.svg" alt="" aria-hidden="true"> Mission Information</h2>
             <div class="slip-grid">
                 <div>
                     <span>Organizer</span>
@@ -134,7 +124,7 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
                 </div>
             </div>
 
-            <h2>Patient Information</h2>
+            <h2 class="slip-section-title"><img src="../assets/icons/users-purple.svg" alt="" aria-hidden="true"> Patient Information</h2>
             <div class="slip-grid">
                 <div>
                     <span>Patient Name</span>
@@ -155,12 +145,12 @@ $back_url = $patient_id ? 'patient_portal.php#portal-bookings' : 'login.php';
             </div>
 
             <div class="slip-instructions">
-                <h2>Day-of Instructions</h2>
+                <h2><img src="../assets/icons/info.svg" alt="" aria-hidden="true"> Day-of Instructions</h2>
                 <p><?php echo nl2br(htmlspecialchars($slip['day_of_instructions'] ?: 'Bring this slip, a valid ID, water, and any maintenance medication.')); ?></p>
             </div>
 
             <div class="slip-instructions">
-                <h2>Coordinator Check-in</h2>
+                <h2><img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true"> Coordinator Check-in</h2>
                 <p>Present this reference number first: <strong><?php echo htmlspecialchars($slip['booking_reference']); ?></strong>. The coordinator can use it to find your approved booking faster.</p>
             </div>
         </section>

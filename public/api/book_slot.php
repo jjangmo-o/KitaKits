@@ -7,6 +7,11 @@ require_once(__DIR__ . '/_auth.php');
 
 require_method('POST');
 
+$patient_id = current_patient_id();
+if (!$patient_id) {
+    json_error('Log in as a patient before submitting a booking request.', 401);
+}
+
 $input = read_request_input();
 $mission_id = isset($input['mission_id']) ? (int)$input['mission_id'] : 0;
 $patient_name = trim($input['patient_name'] ?? '');
@@ -80,8 +85,11 @@ try {
         json_error('This mission is fully booked. Please choose another mission.', 409);
     }
 
-    $patient = find_or_create_patient($conn, $patient_name, $contact_number, $profile);
-    $patient_id = (int)$patient['patient_id'];
+    $patient = update_patient_booking_profile($conn, $patient_id, $patient_name, $contact_number, $profile);
+    if (!$patient) {
+        $conn->rollBack();
+        json_error('Patient profile not found.', 404);
+    }
 
     $existing = $conn->prepare("SELECT booking_id, booking_reference, booking_status
                                 FROM bookings

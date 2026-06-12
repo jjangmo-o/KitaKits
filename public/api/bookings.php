@@ -2,17 +2,13 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/_response.php');
 require_once(__DIR__ . '/_validation.php');
+require_once(__DIR__ . '/_auth.php');
 
 require_method('GET');
 
-$contact = normalize_contact_number($_GET['contact'] ?? '');
-
-if ($contact === '') {
-    json_error('Enter the contact number you used for booking.', 422);
-}
-
-if (!contact_number_is_valid($contact)) {
-    json_error('Enter a valid contact number with 7 to 15 digits.', 422);
+$patient = current_patient_user();
+if (!$patient || empty($patient['patient_id'])) {
+    json_error('Patient authentication required.', 401);
 }
 
 function format_booking($booking)
@@ -60,13 +56,13 @@ try {
             FROM bookings b
             JOIN missions m ON b.mission_id = m.mission_id
             LEFT JOIN medical_intake_forms i ON i.booking_id = b.booking_id
-            WHERE b.contact_number = :contact
+            WHERE b.patient_id = :patient_id
             ORDER BY m.mission_date DESC, b.requested_at DESC";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([':contact' => $contact]);
+    $stmt->execute([':patient_id' => (int)$patient['patient_id']]);
 
     json_success('Bookings loaded.', [
-        'contact' => $contact,
+        'contact' => $patient['contact_number'],
         'bookings' => array_map('format_booking', $stmt->fetchAll(PDO::FETCH_ASSOC))
     ]);
 } catch (PDOException $e) {

@@ -125,11 +125,11 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body>
+<body class="page-edit-booking">
     <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
     <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard', 'href' => 'patient_portal.php'], ['label' => 'Edit Booking']]); ?>
 
-    <main class="container">
+    <main class="container workflow-page workflow-form-page">
         <a href="patient_portal.php#portal-bookings" class="btn-back">
             <span>&larr; </span>
             Back to Portal Bookings
@@ -139,14 +139,42 @@ if (isset($_POST['submit'])) {
             <div class="alert alert-error">Warning: <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <div class="booking-summary">
-            <strong>Mission:</strong> <?php echo htmlspecialchars($booking['mission_name'] ?: $booking['organizer_name']); ?><br>
-            <strong>Date:</strong> <?php echo date('F j, Y', strtotime($booking['mission_date'])); ?><br>
-            <strong>Location:</strong> <?php echo htmlspecialchars($booking['mission_address'] ?: $booking['location']); ?><br>
-            <strong>Status:</strong> <?php echo htmlspecialchars($booking['booking_status']); ?>
-        </div>
+        <section class="workflow-hero workflow-hero-compact">
+            <span class="workflow-hero-icon" aria-hidden="true">
+                <img src="../assets/icons/file-text.svg" alt="">
+            </span>
+            <div>
+                <span class="workflow-kicker">Booking details</span>
+                <h1>Edit Your Booking</h1>
+                <p>Update the contact information connected to this mission request.</p>
+            </div>
+        </section>
 
-        <form method="POST" action="">
+        <div class="workflow-form-layout">
+            <aside class="booking-summary workflow-summary-card">
+                <div class="workflow-card-heading">
+                    <img src="../assets/icons/calendar-purple.svg" alt="" aria-hidden="true">
+                    <div>
+                        <h2>Mission Summary</h2>
+                        <p>Your selected outreach schedule</p>
+                    </div>
+                </div>
+                <dl class="workflow-summary-list">
+                    <div><dt>Mission</dt><dd><?php echo htmlspecialchars($booking['mission_name'] ?: $booking['organizer_name']); ?></dd></div>
+                    <div><dt>Date</dt><dd><?php echo date('F j, Y', strtotime($booking['mission_date'])); ?></dd></div>
+                    <div><dt>Location</dt><dd><?php echo htmlspecialchars($booking['mission_address'] ?: $booking['location']); ?></dd></div>
+                    <div><dt>Status</dt><dd><span class="status-pill status-<?php echo htmlspecialchars(str_replace('_', '-', $booking['booking_status'])); ?>"><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $booking['booking_status']))); ?></span></dd></div>
+                </dl>
+            </aside>
+
+        <form method="POST" action="" class="workflow-form-card">
+            <div class="workflow-card-heading">
+                <img src="../assets/icons/users-purple.svg" alt="" aria-hidden="true">
+                <div>
+                    <h2>Patient Information</h2>
+                    <p>Fields marked by the browser as required must be completed.</p>
+                </div>
+            </div>
             <label for="patient_name">Full Name</label>
             <input
                 type="text"
@@ -220,8 +248,12 @@ if (isset($_POST['submit'])) {
                 </div>
             </div>
 
-            <button type="submit" name="submit">Update Booking</button>
+            <button type="submit" name="submit">
+                <img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true">
+                <span>Update Booking</span>
+            </button>
         </form>
+        </div>
     </main>
     <?php kk_render_footer('pages'); ?>
 </body>

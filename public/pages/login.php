@@ -3,8 +3,13 @@ require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_auth.php');
 require_once(__DIR__ . '/../includes/layout.php');
 
+$next = trim($_GET['next'] ?? $_POST['next'] ?? '');
+$patient_destination = preg_match('/^book_slot\.php\?id=[1-9][0-9]*$/', $next)
+    ? $next
+    : 'patient_portal.php';
+
 if (current_patient_id()) {
-    header('Location: patient_portal.php');
+    header('Location: ' . $patient_destination);
     exit();
 }
 
@@ -20,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (attempt_patient_login($identifier, $password)) {
-        header('Location: patient_portal.php');
+        header('Location: ' . $patient_destination);
         exit();
     }
 
@@ -52,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" action="">
+                <input type="hidden" name="next" value="<?php echo htmlspecialchars($next); ?>">
                 <label for="identifier">Email address</label>
                 <input
                     type="text"

@@ -13,6 +13,7 @@ $booking_id = isset($input['id']) ? (int)$input['id'] : (int)($input['booking_id
 $contact = normalize_contact_number($input['contact'] ?? '');
 $is_admin_action = false;
 $admin_id = null;
+$patient_id = current_patient_id();
 
 if (isset($_SERVER['HTTP_X_ADMIN_TOKEN']) || isset($_GET['admin_token']) || current_admin_user()) {
     $admin_id = require_admin();
@@ -23,8 +24,8 @@ if ($booking_id <= 0) {
     json_error('Invalid booking details provided.', 422);
 }
 
-if (!$is_admin_action && ($contact === '' || !contact_number_is_valid($contact))) {
-    json_error('Invalid booking details provided.', 422);
+if (!$is_admin_action && !$patient_id) {
+    json_error('Patient authentication required.', 401);
 }
 
 try {
@@ -32,13 +33,13 @@ try {
 
     $sql = "SELECT booking_id, mission_id, booking_status
             FROM bookings
-            WHERE booking_id = :id" . ($is_admin_action ? "" : " AND contact_number = :contact") . "
+            WHERE booking_id = :id" . ($is_admin_action ? "" : " AND patient_id = :patient_id") . "
             FOR UPDATE";
     $select = $conn->prepare($sql);
     $params = [':id' => $booking_id];
 
     if (!$is_admin_action) {
-        $params[':contact'] = $contact;
+        $params[':patient_id'] = $patient_id;
     }
 
     $select->execute($params);

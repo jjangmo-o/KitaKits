@@ -186,7 +186,13 @@ if (!function_exists('kk_render_header')) {
                     <div class="make-header-actions">
                         <?php if ($patient): ?>
                             <a class="make-link-action" href="<?php echo kk_html(kk_route($section, 'portal')); ?>">Dashboard</a>
+                            <?php if ($admin): ?>
+                                <a class="make-link-action" href="<?php echo kk_html(kk_route($section, 'admin')); ?>">Admin Panel</a>
+                            <?php endif; ?>
                             <a class="make-primary-action" href="<?php echo kk_html(kk_route($section, 'logout')); ?>">Log out</a>
+                        <?php elseif ($admin): ?>
+                            <span class="make-preview-chip">Patient Preview</span>
+                            <a class="make-primary-action" href="<?php echo kk_html(kk_route($section, 'admin')); ?>">Return to Admin</a>
                         <?php else: ?>
                             <a class="make-link-action" href="<?php echo kk_html(kk_route($section, 'login')); ?>">Log In</a>
                             <a class="make-primary-action" href="<?php echo kk_html(kk_route($section, 'register')); ?>">Register</a>

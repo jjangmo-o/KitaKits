@@ -29,6 +29,7 @@ function kk_booking_time_range($mission)
 
 $mission_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $current_patient_id = current_patient_id();
+$admin_preview = !$current_patient_id && current_admin_user();
 $current_profile = null;
 
 if ($current_patient_id) {
@@ -38,7 +39,7 @@ if ($current_patient_id) {
 }
 
 if ($mission_id === 0) {
-    header("Location: patient_portal.php");
+    header('Location: ' . ($current_patient_id ? 'patient_portal.php' : '../index.php#missions'));
     exit();
 }
 
@@ -48,13 +49,18 @@ $stmt->execute([':id' => $mission_id]);
 $mission = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$mission) {
-    header("Location: patient_portal.php");
+    header('Location: ' . ($current_patient_id ? 'patient_portal.php' : '../index.php#missions'));
     exit();
 }
 
 $error = '';
 
 if (isset($_POST['submit'])) {
+    if (!$current_patient_id) {
+        header('Location: login.php?next=' . urlencode('book_slot.php?id=' . $mission_id));
+        exit();
+    }
+
     $patient_name   = trim($_POST['patient_name']);
     $contact_number = normalize_contact_number($_POST['contact_number']);
     $companion_count = isset($_POST['companion_count']) ? (int)$_POST['companion_count'] : 0;
@@ -106,24 +112,36 @@ if (isset($_POST['submit'])) {
                 $conn->rollBack();
                 $error = 'This mission is already fully booked.';
             } else {
-                $patient = find_or_create_patient($conn, $patient_name, $contact_number, $profile);
+                $patient = update_patient_booking_profile(
+                    $conn,
+                    $current_patient_id,
+                    $patient_name,
+                    $contact_number,
+                    $profile
+                );
 
-                $existing = $conn->prepare("SELECT booking_id, booking_status
+                if (!$patient) {
+                    $conn->rollBack();
+                    $error = 'Patient profile not found.';
+                }
+
+                if ($error === '') {
+                    $existing = $conn->prepare("SELECT booking_id, booking_status
                                             FROM bookings
                                             WHERE patient_id = :patient_id AND mission_id = :mission_id
                                             LIMIT 1");
-                $existing->execute([
-                    ':patient_id' => $patient['patient_id'],
-                    ':mission_id' => $mission_id
-                ]);
-                $booking = $existing->fetch(PDO::FETCH_ASSOC);
+                    $existing->execute([
+                        ':patient_id' => $patient['patient_id'],
+                        ':mission_id' => $mission_id
+                    ]);
+                    $booking = $existing->fetch(PDO::FETCH_ASSOC);
 
-                if ($booking && !in_array($booking['booking_status'], ['cancelled', 'rejected'], true)) {
-                    $conn->rollBack();
-                    $error = 'You already have a booking request for this mission. Please check your Patient Portal.';
-                } else {
-                    if ($booking) {
-                        $stmt_insert = $conn->prepare("UPDATE bookings
+                    if ($booking && !in_array($booking['booking_status'], ['cancelled', 'rejected'], true)) {
+                        $conn->rollBack();
+                        $error = 'You already have a booking request for this mission. Please check your Patient Portal.';
+                    } else {
+                        if ($booking) {
+                            $stmt_insert = $conn->prepare("UPDATE bookings
                                                        SET patient_name = :patient_name,
                                                            contact_number = :contact_number,
                                                            booking_status = 'booked',
@@ -133,31 +151,32 @@ if (isset($_POST['submit'])) {
                                                            completed_at = NULL,
                                                            confirmed_at = NULL
                                                        WHERE booking_id = :booking_id");
-                        $stmt_insert->execute([
-                            ':patient_name' => $patient_name,
-                            ':contact_number' => $contact_number,
-                            ':companion_count' => $companion_count,
-                            ':patient_notes' => $patient_notes ?: null,
-                            ':booking_id' => $booking['booking_id']
-                        ]);
-                    } else {
-                        $stmt_insert = $conn->prepare("INSERT INTO bookings
+                            $stmt_insert->execute([
+                                ':patient_name' => $patient_name,
+                                ':contact_number' => $contact_number,
+                                ':companion_count' => $companion_count,
+                                ':patient_notes' => $patient_notes ?: null,
+                                ':booking_id' => $booking['booking_id']
+                            ]);
+                        } else {
+                            $stmt_insert = $conn->prepare("INSERT INTO bookings
                             (mission_id, patient_id, patient_name, contact_number, booking_status, companion_count, patient_notes)
                             VALUES
                             (:mission_id, :patient_id, :patient_name, :contact_number, 'booked', :companion_count, :patient_notes)");
-                        $stmt_insert->execute([
-                            ':mission_id' => $mission_id,
-                            ':patient_id' => $patient['patient_id'],
-                            ':patient_name' => $patient_name,
-                            ':contact_number' => $contact_number,
-                            ':companion_count' => $companion_count,
-                            ':patient_notes' => $patient_notes ?: null
-                        ]);
-                    }
+                            $stmt_insert->execute([
+                                ':mission_id' => $mission_id,
+                                ':patient_id' => $patient['patient_id'],
+                                ':patient_name' => $patient_name,
+                                ':contact_number' => $contact_number,
+                                ':companion_count' => $companion_count,
+                                ':patient_notes' => $patient_notes ?: null
+                            ]);
+                        }
 
-                    $conn->commit();
-                    header("Location: patient_portal.php?requested=1");
-                    exit();
+                        $conn->commit();
+                        header("Location: patient_portal.php?requested=1");
+                        exit();
+                    }
                 }
             }
 
@@ -223,6 +242,17 @@ $is_bookable = (int)$mission['available_slots'] > 0 && $mission['mission_date'] 
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
+        <?php if (!$current_patient_id): ?>
+            <div class="preview-access-notice">
+                <img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true">
+                <div>
+                    <strong><?php echo $admin_preview ? 'Patient preview mode' : 'Preview only'; ?></strong>
+                    <span>You can review this booking flow, but a patient login is required to submit a request.</span>
+                </div>
+                <a href="login.php?next=<?php echo urlencode('book_slot.php?id=' . $mission_id); ?>" class="btn-primary compact-button">Patient Log In</a>
+            </div>
+        <?php endif; ?>
+
         <div id="bookingStatus" class="status-message" role="status" hidden></div>
         <div id="bookingSuccessActions" class="booking-actions success-actions" hidden></div>
         <div id="bookingLoading" class="loading-state" role="status" aria-live="polite" hidden></div>
@@ -233,6 +263,7 @@ $is_bookable = (int)$mission['available_slots'] > 0 && $mission['mission_date'] 
                 <?php if ($is_bookable): ?>
                     <form method="POST" action="" id="bookingForm">
                         <input type="hidden" name="mission_id" value="<?php echo htmlspecialchars($mission_id); ?>">
+                        <fieldset class="booking-preview-fieldset" <?php echo $current_patient_id ? '' : 'disabled'; ?>>
 
                         <div class="booking-step-panel" data-step-panel="1">
                             <h2>Your Information</h2>
@@ -351,6 +382,7 @@ $is_bookable = (int)$mission['available_slots'] > 0 && $mission['mission_date'] 
                                 <button type="submit" name="submit" id="bookingSubmit" class="btn-primary">Submit Booking Request</button>
                             </div>
                         </div>
+                        </fieldset>
                     </form>
                 <?php else: ?>
                     <div class="make-empty-state">

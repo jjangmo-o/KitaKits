@@ -184,7 +184,7 @@ $patient_name = trim(implode(' ', array_filter([
     <title>Patient Dashboard | KitaKits</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="patient-dashboard-page">
     <?php kk_render_header(['section' => 'pages', 'active' => 'portal']); ?>
     <?php kk_render_breadcrumbs('pages', [['label' => 'Patient Dashboard']]); ?>
 
@@ -206,21 +206,29 @@ $patient_name = trim(implode(' ', array_filter([
         <?php endif; ?>
 
         <section class="portal-hero workspace-section">
-            <div>
-                <span class="eyebrow">Signed in as patient</span>
-                <h2><?php echo htmlspecialchars($patient_name); ?></h2>
-                <p>Find missions, submit booking requests, complete pre-screening, and print your confirmation slip after approval.</p>
+            <div class="portal-welcome">
+                <span class="portal-welcome-icon" aria-hidden="true">
+                    <img src="../assets/icons/users.svg" alt="">
+                </span>
+                <div>
+                    <span class="eyebrow">Patient dashboard</span>
+                    <h1>Welcome, <?php echo htmlspecialchars($patient_name); ?></h1>
+                    <p>Find a cataract mission, manage your requests, and keep your patient information ready for your visit.</p>
+                </div>
             </div>
             <div class="portal-stats">
                 <div class="mini-stat">
+                    <img src="../assets/icons/clock.svg" alt="" aria-hidden="true">
                     <span>Booked</span>
                     <strong><?php echo (int)$counts['booked']; ?></strong>
                 </div>
                 <div class="mini-stat">
+                    <img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true">
                     <span>Confirmed</span>
                     <strong><?php echo (int)$counts['confirmed']; ?></strong>
                 </div>
                 <div class="mini-stat">
+                    <img src="../assets/icons/calendar-days.svg" alt="" aria-hidden="true">
                     <span>Completed</span>
                     <strong><?php echo (int)$counts['completed']; ?></strong>
                 </div>
@@ -228,20 +236,33 @@ $patient_name = trim(implode(' ', array_filter([
         </section>
 
         <nav class="portal-jump-nav" aria-label="Patient portal sections">
-            <a href="#portal-missions">Find Missions</a>
-            <a href="#portal-bookings">My Bookings</a>
-            <a href="#portal-profile">Profile</a>
+            <a href="#portal-missions">
+                <img src="../assets/icons/search.svg" alt="" aria-hidden="true">
+                <span>Find Missions</span>
+            </a>
+            <a href="#portal-bookings">
+                <img src="../assets/icons/book-open.svg" alt="" aria-hidden="true">
+                <span>My Bookings</span>
+            </a>
+            <a href="#portal-profile">
+                <img src="../assets/icons/users-purple.svg" alt="" aria-hidden="true">
+                <span>My Profile</span>
+            </a>
         </nav>
 
-        <section class="workspace-section" id="portal-missions">
-            <div class="section-header">
+        <section class="workspace-section portal-panel" id="portal-missions">
+            <div class="section-header portal-section-header">
+                <span class="portal-section-icon" aria-hidden="true">
+                    <img src="../assets/icons/search.svg" alt="">
+                </span>
                 <div>
-                    <span class="eyebrow">Book inside the portal</span>
+                    <span class="portal-section-kicker">Discover care near you</span>
                     <h2>Find Available Missions</h2>
+                    <p>Search upcoming cataract outreach schedules and check remaining slots.</p>
                 </div>
             </div>
 
-            <form id="missionFilters" class="filter-bar" aria-label="Search and filter missions" data-api-url="../api/missions.php" data-page-prefix="" data-asset-prefix="../assets/">
+            <form id="missionFilters" class="filter-bar portal-mission-filters" aria-label="Search and filter missions" data-api-url="../api/missions.php" data-page-prefix="" data-asset-prefix="../assets/">
                 <div class="form-group">
                     <label for="missionSearch">Keyword</label>
                     <input type="search" id="missionSearch" name="q" placeholder="Organizer, mission, place">
@@ -265,98 +286,133 @@ $patient_name = trim(implode(' ', array_filter([
                         <option value="slots">Most slots</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-search">Apply</button>
+                <button type="submit" class="btn-search">
+                    <img src="../assets/icons/filter.svg" alt="" aria-hidden="true">
+                    <span>Apply filters</span>
+                </button>
             </form>
 
-            <div id="missionsStatus" class="status-message" role="status" hidden></div>
-            <div id="missionsLoading" class="loading-state" role="status" aria-live="polite" hidden></div>
-            <p id="missionsEmptyState" class="empty-msg" hidden>No missions match your filters right now.</p>
+            <div class="portal-panel-content">
+                <div id="missionsStatus" class="status-message" role="status" hidden></div>
+                <div id="missionsLoading" class="loading-state" role="status" aria-live="polite" hidden></div>
+                <p id="missionsEmptyState" class="empty-msg" hidden>No missions match your filters right now.</p>
 
-            <div id="availableMissions" class="mission-grid portal-mission-grid" aria-live="polite"></div>
+                <div id="availableMissions" class="mission-grid portal-mission-grid" aria-live="polite"></div>
 
-            <section id="fullyBookedSection" class="fully-booked-section" hidden>
-                <h2>Fully Booked Missions</h2>
-                <div id="fullyBookedMissions" class="mission-grid portal-mission-grid" aria-live="polite"></div>
-            </section>
+                <section id="fullyBookedSection" class="fully-booked-section" hidden>
+                    <h2>Fully Booked Missions</h2>
+                    <div id="fullyBookedMissions" class="mission-grid portal-mission-grid" aria-live="polite"></div>
+                </section>
+            </div>
         </section>
 
-        <section class="workspace-section" id="portal-bookings">
-            <div class="section-header">
-                <h2>My Bookings</h2>
-                <a href="#portal-missions" class="btn-primary compact-button">Find Missions</a>
-            </div>
-
-            <?php if (!$bookings): ?>
-                <p class="empty-msg">No bookings yet. Browse missions and submit a booking request.</p>
-            <?php else: ?>
-                <div class="bookings-list">
-                    <?php foreach ($bookings as $booking): ?>
-                        <?php
-                            $status = $booking['booking_status'];
-                            $intake_status = $booking['intake_review_status'] ?: 'not_submitted';
-                        ?>
-                        <article class="booking-card">
-                            <div class="booking-header">
-                                <h3><?php echo htmlspecialchars($booking['mission_name']); ?></h3>
-                                <span class="booking-id"><?php echo htmlspecialchars($booking['booking_reference']); ?></span>
-                            </div>
-
-                            <div class="booking-details">
-                                <div class="detail-row">
-                                    <span class="detail-label">Mission Date:</span>
-                                    <span class="detail-value"><?php echo date('F j, Y', strtotime($booking['mission_date'])); ?></span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Full Address:</span>
-                                    <span class="detail-value"><?php echo htmlspecialchars($booking['full_address']); ?></span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Booking Status:</span>
-                                    <span class="detail-value status-pill <?php echo htmlspecialchars(portal_status_class($status)); ?>"><?php echo htmlspecialchars($status); ?></span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Pre-screening:</span>
-                                    <span class="detail-value status-pill <?php echo htmlspecialchars(portal_status_class($intake_status)); ?>"><?php echo htmlspecialchars($intake_status); ?></span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Headcount:</span>
-                                    <span class="detail-value"><?php echo (int)$booking['total_headcount']; ?> total</span>
-                                </div>
-                            </div>
-
-                            <div class="booking-actions">
-                                <a href="pre_screening.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-secondary compact-button">Pre-screening</a>
-                                <?php if ($status === 'confirmed'): ?>
-                                    <a href="booking_slip.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-primary compact-button">Print Slip</a>
-                                <?php else: ?>
-                                    <a href="booking_slip.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-secondary compact-button">View Slip Status</a>
-                                <?php endif; ?>
-                                <?php if (!in_array($status, ['cancelled', 'completed', 'no_show'], true)): ?>
-                                    <a href="edit_booking.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-edit">Edit</a>
-                                <?php endif; ?>
-                            </div>
-
-                            <p class="reminder">
-                                <?php if ($status === 'confirmed'): ?>
-                                    Your slot is secured. Bring your printed slip, valid ID, and any maintenance medication.
-                                <?php else: ?>
-                                    Booked means your request is received. The slot is secured only after admin confirmation.
-                                <?php endif; ?>
-                            </p>
-                        </article>
-                    <?php endforeach; ?>
+        <section class="workspace-section portal-panel" id="portal-bookings">
+            <div class="section-header portal-section-header">
+                <span class="portal-section-icon" aria-hidden="true">
+                    <img src="../assets/icons/book-open.svg" alt="">
+                </span>
+                <div>
+                    <span class="portal-section-kicker">Your care journey</span>
+                    <h2>My Bookings</h2>
+                    <p>Track approvals, pre-screening progress, and visit instructions.</p>
                 </div>
-            <?php endif; ?>
-        </section>
-
-        <section class="workspace-section" id="portal-profile">
-            <div class="section-header">
-                <h2>Patient Profile</h2>
+                <a href="#portal-missions" class="btn-primary compact-button portal-section-action">
+                    <img src="../assets/icons/search.svg" alt="" aria-hidden="true">
+                    <span>Find Missions</span>
+                </a>
             </div>
 
-            <form method="POST" action="">
+            <div class="portal-panel-content">
+                <?php if (!$bookings): ?>
+                    <p class="empty-msg portal-empty-state">No bookings yet. Browse missions and submit a booking request.</p>
+                <?php else: ?>
+                    <div class="bookings-list portal-bookings-list">
+                        <?php foreach ($bookings as $booking): ?>
+                            <?php
+                                $status = $booking['booking_status'];
+                                $intake_status = $booking['intake_review_status'] ?: 'not_submitted';
+                            ?>
+                            <article class="booking-card portal-booking-card">
+                                <div class="booking-header">
+                                    <div>
+                                        <span class="portal-booking-label">Cataract mission</span>
+                                        <h3><?php echo htmlspecialchars($booking['mission_name']); ?></h3>
+                                    </div>
+                                    <span class="booking-id"><?php echo htmlspecialchars($booking['booking_reference']); ?></span>
+                                </div>
+
+                                <div class="booking-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Mission Date</span>
+                                        <span class="detail-value"><?php echo date('F j, Y', strtotime($booking['mission_date'])); ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Full Address</span>
+                                        <span class="detail-value"><?php echo htmlspecialchars($booking['full_address']); ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Booking Status</span>
+                                        <span class="detail-value status-pill <?php echo htmlspecialchars(portal_status_class($status)); ?>"><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $status))); ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Pre-screening</span>
+                                        <span class="detail-value status-pill <?php echo htmlspecialchars(portal_status_class($intake_status)); ?>"><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $intake_status))); ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Headcount</span>
+                                        <span class="detail-value"><?php echo (int)$booking['total_headcount']; ?> total</span>
+                                    </div>
+                                </div>
+
+                                <div class="booking-actions">
+                                    <a href="pre_screening.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-secondary compact-button">Pre-screening</a>
+                                    <?php if ($status === 'confirmed'): ?>
+                                        <a href="booking_slip.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-primary compact-button">Print Slip</a>
+                                    <?php else: ?>
+                                        <a href="booking_slip.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-secondary compact-button">View Slip Status</a>
+                                    <?php endif; ?>
+                                    <?php if (!in_array($status, ['cancelled', 'completed', 'no_show'], true)): ?>
+                                        <a href="edit_booking.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-edit compact-button">Edit Booking</a>
+                                    <?php endif; ?>
+                                </div>
+
+                                <p class="reminder">
+                                    <img src="../assets/icons/info.svg" alt="" aria-hidden="true">
+                                    <span>
+                                        <?php if ($status === 'confirmed'): ?>
+                                            Your slot is secured. Bring your printed slip, valid ID, and any maintenance medication.
+                                        <?php else: ?>
+                                            Booked means your request is received. The slot is secured only after admin confirmation.
+                                        <?php endif; ?>
+                                    </span>
+                                </p>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <section class="workspace-section portal-panel" id="portal-profile">
+            <div class="section-header portal-section-header">
+                <span class="portal-section-icon" aria-hidden="true">
+                    <img src="../assets/icons/users-purple.svg" alt="">
+                </span>
+                <div>
+                    <span class="portal-section-kicker">Personal information</span>
+                    <h2>Patient Profile</h2>
+                    <p>Keep these details accurate so coordinators can contact and assist you.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="" class="portal-profile-form">
                 <input type="hidden" name="action" value="update_profile">
 
+                <div class="portal-form-section">
+                    <div class="portal-form-heading">
+                        <strong>Basic information</strong>
+                        <span>Your legal name and personal details</span>
+                    </div>
                 <div class="form-grid form-grid-3">
                     <div>
                         <label for="first_name">First Name *</label>
@@ -392,7 +448,13 @@ $patient_name = trim(implode(' ', array_filter([
                         </select>
                     </div>
                 </div>
+                </div>
 
+                <div class="portal-form-section">
+                    <div class="portal-form-heading">
+                        <strong>Contact and address</strong>
+                        <span>Where the mission team can reach you</span>
+                    </div>
                 <div class="form-grid">
                     <div>
                         <label for="contact_number">Contact Number *</label>
@@ -421,7 +483,13 @@ $patient_name = trim(implode(' ', array_filter([
                         <input type="text" id="province" name="province" value="<?php echo htmlspecialchars($profile['province'] ?? ''); ?>" maxlength="100">
                     </div>
                 </div>
+                </div>
 
+                <div class="portal-form-section">
+                    <div class="portal-form-heading">
+                        <strong>Emergency contact</strong>
+                        <span>A trusted person we can contact when needed</span>
+                    </div>
                 <div class="form-grid">
                     <div>
                         <label for="emergency_contact_name">Emergency Contact Name</label>
@@ -432,8 +500,14 @@ $patient_name = trim(implode(' ', array_filter([
                         <input type="text" id="emergency_contact_number" name="emergency_contact_number" value="<?php echo htmlspecialchars($profile['emergency_contact_number'] ?? ''); ?>" maxlength="20">
                     </div>
                 </div>
+                </div>
 
-                <button type="submit" class="btn-primary">Save Profile</button>
+                <div class="portal-profile-actions">
+                    <button type="submit" class="btn-primary">
+                        <img src="../assets/icons/shield-check.svg" alt="" aria-hidden="true">
+                        <span>Save Profile</span>
+                    </button>
+                </div>
             </form>
         </section>
     </main>

@@ -107,6 +107,43 @@ function find_or_create_patient(PDO $conn, $full_name, $contact_number, $profile
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+function update_patient_booking_profile(PDO $conn, $patient_id, $full_name, $contact_number, $profile = [])
+{
+    $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id = :id LIMIT 1");
+    $stmt->execute([':id' => (int)$patient_id]);
+    $patient = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$patient) {
+        return null;
+    }
+
+    [$first_name, $last_name] = split_patient_name($full_name);
+    $updates = [
+        'first_name = :first_name',
+        'last_name = :last_name',
+        'contact_number = :contact_number'
+    ];
+    $params = [
+        ':id' => (int)$patient_id,
+        ':first_name' => $first_name,
+        ':last_name' => $last_name,
+        ':contact_number' => $contact_number
+    ];
+
+    foreach (['email', 'birthdate', 'sex', 'full_address', 'barangay', 'city', 'province'] as $field) {
+        if (array_key_exists($field, $profile) && trim((string)$profile[$field]) !== '') {
+            $updates[] = $field . ' = :' . $field;
+            $params[':' . $field] = trim((string)$profile[$field]);
+        }
+    }
+
+    $update = $conn->prepare("UPDATE patients SET " . implode(', ', $updates) . " WHERE patient_id = :id");
+    $update->execute($params);
+
+    $stmt->execute([':id' => (int)$patient_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 function intake_flags_from_input($input)
 {
     $flags = [];

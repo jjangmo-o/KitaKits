@@ -31,14 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
 
     if ($first_name === '' || $last_name === '' || $contact_number === '') {
         $profile_error = 'First name, last name, and contact number are required.';
+    } elseif (!patient_name_parts_are_valid($first_name, $middle_name, $last_name)) {
+        $profile_error = 'First, middle, and last name must each be 30 characters or fewer and 65 characters or fewer combined.';
     } elseif (!contact_number_is_valid($contact_number)) {
-        $profile_error = 'Enter a valid contact number with 7 to 15 digits.';
+        $profile_error = 'Enter an 11-digit mobile number starting with 09.';
     } elseif ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $profile_error = 'Enter a valid email address.';
     } elseif (!in_array($sex, $allowed_sex, true)) {
         $profile_error = 'Choose a valid sex option.';
     } elseif ($emergency_contact_number !== '' && !contact_number_is_valid($emergency_contact_number)) {
-        $profile_error = 'Enter a valid emergency contact number.';
+        $profile_error = 'Enter an 11-digit emergency mobile number starting with 09.';
+    } elseif (text_length($emergency_contact_name) > 65) {
+        $profile_error = 'Emergency contact name must be 65 characters or fewer.';
     } else {
         try {
             $conn->beginTransaction();
@@ -282,7 +286,7 @@ $patient_name = trim(implode(' ', array_filter([
                 <div class="form-group">
                     <label for="missionSort">Sort</label>
                     <select id="missionSort" name="sort">
-                        <option value="mission_date">Nearest date</option>
+                        <option value="date">Nearest date</option>
                         <option value="slots">Most slots</option>
                     </select>
                 </div>
@@ -374,6 +378,11 @@ $patient_name = trim(implode(' ', array_filter([
                                     <?php if (!in_array($status, ['cancelled', 'completed', 'no_show'], true)): ?>
                                         <a href="edit_booking.php?id=<?php echo (int)$booking['booking_id']; ?>" class="btn-edit compact-button">Edit Booking</a>
                                     <?php endif; ?>
+                                    <?php if ($status === 'booked'): ?>
+                                        <button type="button" class="btn-delete compact-button" data-cancel-booking data-id="<?php echo (int)$booking['booking_id']; ?>">Cancel Request</button>
+                                    <?php elseif ($status === 'confirmed'): ?>
+                                        <span class="table-subtext">Contact the coordinator to cancel a confirmed booking.</span>
+                                    <?php endif; ?>
                                 </div>
 
                                 <p class="reminder">
@@ -416,15 +425,15 @@ $patient_name = trim(implode(' ', array_filter([
                 <div class="form-grid form-grid-3">
                     <div>
                         <label for="first_name">First Name *</label>
-                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($profile['first_name'] ?? ''); ?>" maxlength="60" required>
+                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($profile['first_name'] ?? ''); ?>" maxlength="30" required>
                     </div>
                     <div>
                         <label for="middle_name">Middle Name</label>
-                        <input type="text" id="middle_name" name="middle_name" value="<?php echo htmlspecialchars($profile['middle_name'] ?? ''); ?>" maxlength="60">
+                        <input type="text" id="middle_name" name="middle_name" value="<?php echo htmlspecialchars($profile['middle_name'] ?? ''); ?>" maxlength="30">
                     </div>
                     <div>
                         <label for="last_name">Last Name *</label>
-                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($profile['last_name'] ?? ''); ?>" maxlength="60" required>
+                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($profile['last_name'] ?? ''); ?>" maxlength="30" required>
                     </div>
                 </div>
 
@@ -458,7 +467,7 @@ $patient_name = trim(implode(' ', array_filter([
                 <div class="form-grid">
                     <div>
                         <label for="contact_number">Contact Number *</label>
-                        <input type="text" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($profile['contact_number'] ?? ''); ?>" required>
+                        <input type="tel" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($profile['contact_number'] ?? ''); ?>" pattern="09[0-9]{9}" minlength="11" maxlength="11" inputmode="numeric" required>
                     </div>
                     <div>
                         <label for="email">Email Address</label>
@@ -493,11 +502,11 @@ $patient_name = trim(implode(' ', array_filter([
                 <div class="form-grid">
                     <div>
                         <label for="emergency_contact_name">Emergency Contact Name</label>
-                        <input type="text" id="emergency_contact_name" name="emergency_contact_name" value="<?php echo htmlspecialchars($profile['emergency_contact_name'] ?? ''); ?>" maxlength="120">
+                        <input type="text" id="emergency_contact_name" name="emergency_contact_name" value="<?php echo htmlspecialchars($profile['emergency_contact_name'] ?? ''); ?>" maxlength="65">
                     </div>
                     <div>
                         <label for="emergency_contact_number">Emergency Contact Number</label>
-                        <input type="text" id="emergency_contact_number" name="emergency_contact_number" value="<?php echo htmlspecialchars($profile['emergency_contact_number'] ?? ''); ?>" maxlength="20">
+                        <input type="tel" id="emergency_contact_number" name="emergency_contact_number" value="<?php echo htmlspecialchars($profile['emergency_contact_number'] ?? ''); ?>" pattern="09[0-9]{9}" minlength="11" maxlength="11" inputmode="numeric">
                     </div>
                 </div>
                 </div>
@@ -514,5 +523,6 @@ $patient_name = trim(implode(' ', array_filter([
     <?php kk_render_footer('pages'); ?>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/missions.js"></script>
+    <script src="../assets/js/patient-portal.js"></script>
 </body>
 </html>

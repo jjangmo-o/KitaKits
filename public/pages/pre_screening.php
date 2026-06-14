@@ -137,7 +137,6 @@ function checked($intake, $field)
 
     <main class="container workflow-page workflow-form-page">
         <a href="patient_portal.php#portal-bookings" class="btn-back">
-            <span>&larr; </span>
             Back to Portal Bookings
         </a>
 

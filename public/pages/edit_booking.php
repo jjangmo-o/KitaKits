@@ -2,19 +2,10 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_schema_helpers.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../api/_validation.php');
 require_once(__DIR__ . '/../includes/layout.php');
 
 $patient_id = require_patient_page('login.php');
-
-function normalize_contact_number($contact)
-{
-    return preg_replace('/[\s\-\(\)]/', '', trim($contact));
-}
-
-function contact_number_is_valid($contact)
-{
-    return preg_match('/^\+?[0-9]{7,15}$/', $contact) === 1;
-}
 
 $booking_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $current_contact = isset($_GET['contact']) ? normalize_contact_number($_GET['contact']) : '';
@@ -58,10 +49,10 @@ if (isset($_POST['submit'])) {
 
     if (empty($patient_name) || empty($contact_number)) {
         $error = 'Please provide both your name and contact number.';
-    } elseif (strlen($patient_name) > 120) {
-        $error = 'Full name must be 120 characters or fewer.';
+    } elseif (text_length($patient_name) > 100) {
+        $error = 'Full name must be 100 characters or fewer.';
     } elseif (!contact_number_is_valid($contact_number)) {
-        $error = 'Enter a valid contact number with 7 to 15 digits.';
+        $error = 'Enter an 11-digit mobile number starting with 09.';
     } elseif ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Enter a valid email address.';
     } else {
@@ -131,7 +122,6 @@ if (isset($_POST['submit'])) {
 
     <main class="container workflow-page workflow-form-page">
         <a href="patient_portal.php#portal-bookings" class="btn-back">
-            <span>&larr; </span>
             Back to Portal Bookings
         </a>
 
@@ -181,18 +171,21 @@ if (isset($_POST['submit'])) {
                 id="patient_name"
                 name="patient_name"
                 value="<?php echo isset($_POST['patient_name']) ? htmlspecialchars($_POST['patient_name']) : htmlspecialchars($booking['patient_name']); ?>"
-                maxlength="120"
+                maxlength="100"
                 required
                 aria-label="Patient full name"
             >
 
             <label for="contact_number">Contact Number</label>
             <input
-                type="text"
+                type="tel"
                 id="contact_number"
                 name="contact_number"
                 value="<?php echo isset($_POST['contact_number']) ? htmlspecialchars($_POST['contact_number']) : htmlspecialchars($booking['contact_number']); ?>"
-                pattern="[\+0-9\s\-\(\)]{7,20}"
+                pattern="09[0-9]{9}"
+                minlength="11"
+                maxlength="11"
+                inputmode="numeric"
                 required
                 aria-label="Patient contact number"
             >

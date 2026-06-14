@@ -85,7 +85,7 @@ CREATE TABLE `patients` (
   `barangay` varchar(100) DEFAULT NULL,
   `city` varchar(100) DEFAULT NULL,
   `province` varchar(100) DEFAULT NULL,
-  `emergency_contact_name` varchar(120) DEFAULT NULL,
+  `emergency_contact_name` varchar(65) DEFAULT NULL,
   `emergency_contact_number` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -102,7 +102,7 @@ CREATE TABLE `patients` (
 
 CREATE TABLE `missions` (
   `mission_id` int(11) NOT NULL AUTO_INCREMENT,
-  `mission_name` varchar(150) NOT NULL,
+  `mission_name` varchar(100) NOT NULL,
   `organizer_name` varchar(100) NOT NULL,
   `mission_date` date NOT NULL,
   `start_time` time DEFAULT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE `bookings` (
   `booking_reference` varchar(20) DEFAULT NULL COMMENT 'Auto-generated as KK-YYYY-XXXXX when left blank.',
   `mission_id` int(11) NOT NULL,
   `patient_id` int(11) NOT NULL,
-  `patient_name` varchar(120) NOT NULL COMMENT 'Snapshot for compatibility with the original site and printable slip',
+  `patient_name` varchar(100) NOT NULL COMMENT 'Snapshot for compatibility with the original site and printable slip',
   `contact_number` varchar(20) NOT NULL COMMENT 'Snapshot for compatibility with the original site and printable slip',
   `booking_status` enum('booked','confirmed','rejected','cancelled','completed','no_show') NOT NULL DEFAULT 'booked',
   `companion_count` int(3) NOT NULL DEFAULT 0,

@@ -29,8 +29,12 @@ function kk_mission_status($mission)
         return ['completed', 'Mission Completed'];
     }
 
-    if ((int)$mission['available_slots'] <= 0 || $mission['mission_status'] === 'closed') {
+    if ((int)$mission['available_slots'] <= 0) {
         return ['full', 'Fully Booked'];
+    }
+
+    if ($mission['mission_status'] === 'closed') {
+        return ['full', 'Mission Closed'];
     }
 
     return ['available', 'Accepting Bookings'];

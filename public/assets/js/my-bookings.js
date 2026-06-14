@@ -21,7 +21,7 @@
         const intakeUrl = `pre_screening.php?id=${encodeURIComponent(booking.booking_id)}&contact=${encodeURIComponent(contact)}`;
         const slipUrl = `booking_slip.php?id=${encodeURIComponent(booking.booking_id)}&contact=${encodeURIComponent(contact)}`;
         const canPrint = booking.booking_status === 'confirmed';
-        const canCancel = !['cancelled', 'completed', 'no_show'].includes(booking.booking_status);
+        const canCancel = booking.booking_status === 'booked';
 
         return `
             <div class="booking-card">
@@ -72,6 +72,7 @@
                         data-id="${escapeHtml(booking.booking_id)}"
                         data-contact="${escapeHtml(contact)}"
                     >Cancel</button>` : ''}
+                    ${booking.booking_status === 'confirmed' ? '<span class="table-subtext">Contact the coordinator to cancel a confirmed booking.</span>' : ''}
                 </div>
 
                 <p class="reminder">

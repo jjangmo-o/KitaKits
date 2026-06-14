@@ -2,17 +2,8 @@
 require_once(__DIR__ . '/../../app/config/db.php');
 require_once(__DIR__ . '/../api/_schema_helpers.php');
 require_once(__DIR__ . '/../api/_auth.php');
+require_once(__DIR__ . '/../api/_validation.php');
 require_once(__DIR__ . '/../includes/layout.php');
-
-function normalize_contact_number($contact)
-{
-    return preg_replace('/[\s\-\(\)]/', '', trim($contact));
-}
-
-function contact_number_is_valid($contact)
-{
-    return preg_match('/^\+?[0-9]{7,15}$/', $contact) === 1;
-}
 
 function kk_booking_time_range($mission)
 {
@@ -78,10 +69,10 @@ if (isset($_POST['submit'])) {
 
     if (empty($patient_name) || empty($contact_number)) {
         $error = 'Please provide both your name and contact number.';
-    } elseif (strlen($patient_name) > 120) {
-        $error = 'Full name must be 120 characters or fewer.';
+    } elseif (text_length($patient_name) > 100) {
+        $error = 'Full name must be 100 characters or fewer.';
     } elseif (!contact_number_is_valid($contact_number)) {
-        $error = 'Enter a valid contact number with 7 to 15 digits.';
+        $error = 'Enter an 11-digit mobile number starting with 09.';
     } elseif ($profile['email'] !== '' && !filter_var($profile['email'], FILTER_VALIDATE_EMAIL)) {
         $error = 'Enter a valid email address.';
     } elseif ($companion_count < 0 || $companion_count > 10) {
@@ -276,18 +267,21 @@ $is_bookable = (int)$mission['available_slots'] > 0 && $mission['mission_date'] 
                                 name="patient_name"
                                 value="<?php echo htmlspecialchars($patient_name_value); ?>"
                                 placeholder="e.g. Maria Santos"
-                                maxlength="120"
+                                maxlength="100"
                                 required
                             >
 
                             <label for="contact_number">Mobile Number <span>*</span></label>
                             <input
-                                type="text"
+                                type="tel"
                                 id="contact_number"
                                 name="contact_number"
                                 value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ($current_profile['contact_number'] ?? '')); ?>"
                                 placeholder="e.g. 09171234567"
-                                pattern="[\+0-9\s\-\(\)]{7,20}"
+                                pattern="09[0-9]{9}"
+                                minlength="11"
+                                maxlength="11"
+                                inputmode="numeric"
                                 required
                             >
                             <small>Save this number - it's required to look up your booking.</small>

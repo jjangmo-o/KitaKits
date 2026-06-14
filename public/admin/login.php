@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <section class="auth-card figma-auth-card" aria-label="Admin login">
         <a href="../index.php" class="btn-back">
-            <span>&larr; </span>
             Back to Patient Page
         </a>
 
@@ -64,14 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             >
 
             <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="admin2025"
-                autocomplete="current-password"
-                required
-            >
+            <div class="password-field">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="admin2025"
+                    autocomplete="current-password"
+                    required
+                >
+                <button type="button" aria-label="Show password">Show</button>
+            </div>
 
             <button type="submit" class="btn-primary auth-submit">Log In</button>
 
@@ -87,5 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
     <?php kk_render_footer('admin', ['mode' => 'public']); ?>
+    <script src="../assets/js/password-toggle.js"></script>
 </body>
 </html>

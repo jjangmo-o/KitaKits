@@ -23,8 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($first_name === '' || $last_name === '' || $contact_number === '' || $password === '') {
         $error = 'First name, last name, contact number, and password are required.';
+    } elseif (!patient_name_parts_are_valid($first_name, '', $last_name)) {
+        $error = 'First and last name must each be 30 characters or fewer and 65 characters or fewer combined.';
     } elseif (!contact_number_is_valid($contact_number)) {
-        $error = 'Enter a valid contact number with 7 to 15 digits.';
+        $error = 'Enter an 11-digit mobile number starting with 09.';
     } elseif ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Enter a valid email address.';
     } elseif (strlen($password) < 8) {
@@ -189,16 +191,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-grid">
                     <div>
                         <label for="first_name">First Name *</label>
-                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>" maxlength="60" autocomplete="given-name" required>
+                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>" maxlength="30" autocomplete="given-name" required>
                     </div>
                     <div>
                         <label for="last_name">Last Name *</label>
-                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>" maxlength="60" autocomplete="family-name" required>
+                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>" maxlength="30" autocomplete="family-name" required>
                     </div>
                 </div>
 
                 <label for="contact_number">Contact Number *</label>
-                <input type="text" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ''); ?>" placeholder="09XXXXXXXXX" pattern="[\+0-9\s\-\(\)]{7,20}" autocomplete="tel" required>
+                <input type="tel" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($_POST['contact_number'] ?? ''); ?>" placeholder="09XXXXXXXXX" pattern="09[0-9]{9}" minlength="11" maxlength="11" inputmode="numeric" autocomplete="tel" required>
 
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" placeholder="you@example.com" maxlength="150" autocomplete="email">
@@ -217,11 +219,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-grid">
                     <div>
                         <label for="password">Password *</label>
-                        <input type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+                        <div class="password-field">
+                            <input type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+                            <button type="button" aria-label="Show password">Show</button>
+                        </div>
                     </div>
                     <div>
                         <label for="confirm_password">Confirm Password *</label>
-                        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required>
+                        <div class="password-field">
+                            <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required>
+                            <button type="button" data-password-label="confirmation password" aria-label="Show confirmation password">Show</button>
+                        </div>
                     </div>
                 </div>
 
@@ -236,5 +244,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
     <?php kk_render_footer('pages'); ?>
+    <script src="../assets/js/password-toggle.js"></script>
 </body>
 </html>

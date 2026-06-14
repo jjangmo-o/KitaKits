@@ -56,11 +56,14 @@ $admin_preview = !$patient && current_admin_user();
                         <div class="form-group">
                             <label for="contact">Contact Number</label>
                             <input
-                                type="text"
+                                type="tel"
                                 id="contact"
                                 name="contact"
                                 placeholder="e.g. 09171234567"
-                                pattern="[\+0-9\s\-\(\)]{7,20}"
+                                pattern="09[0-9]{9}"
+                                minlength="11"
+                                maxlength="11"
+                                inputmode="numeric"
                                 autocomplete="tel"
                                 value="<?php echo htmlspecialchars($patient['contact_number'] ?? ''); ?>"
                                 <?php echo $patient ? 'readonly' : 'disabled'; ?>

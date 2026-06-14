@@ -41,6 +41,8 @@ if (isset($_POST['submit']) && $mission) {
 
     if ($mission_name === '' || $organizer === '' || $date === '' || $location === '' || $city_area === '' || $full_address === '' || $total_slots === '' || $available_slots === '') {
         $error = 'Mission name, organizer, date, location, city/area, full address, total slots, and available slots are required.';
+    } elseif (strlen($mission_name) > 100 || strlen($organizer) > 100) {
+        $error = 'Mission and organizer names must be 100 characters or fewer.';
     } elseif (!$date_check || $date_check->format('Y-m-d') !== $date) {
         $error = 'Please enter a valid mission date.';
     } elseif (filter_var($total_slots, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false || filter_var($available_slots, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
@@ -119,7 +121,6 @@ function mission_value($mission, $field)
 
     <main class="container admin-workspace form-workspace">
         <a href="admin_dashboard.php" class="btn-back">
-            <span>&larr; </span>
             Back to Dashboard
         </a>
 
@@ -130,7 +131,7 @@ function mission_value($mission, $field)
         <?php if ($mission): ?>
             <form method="POST" action="" class="wide-form">
                 <label for="mission_name">Mission Name</label>
-                <input type="text" id="mission_name" name="mission_name" value="<?php echo mission_value($mission, 'mission_name'); ?>" maxlength="150" required>
+                <input type="text" id="mission_name" name="mission_name" value="<?php echo mission_value($mission, 'mission_name'); ?>" maxlength="100" required>
 
                 <label for="organizer_name">Organizer Name</label>
                 <input type="text" id="organizer_name" name="organizer_name" value="<?php echo mission_value($mission, 'organizer_name'); ?>" maxlength="100" required>

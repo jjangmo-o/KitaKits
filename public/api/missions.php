@@ -7,6 +7,15 @@ require_method('GET');
 function format_mission($mission)
 {
     $time_range = null;
+    $effective_status = $mission['mission_status'];
+
+    if ($mission['mission_status'] === 'completed' || $mission['mission_date'] < date('Y-m-d')) {
+        $effective_status = 'completed';
+    } elseif ($mission['mission_status'] === 'closed') {
+        $effective_status = 'closed';
+    } elseif ((int)$mission['available_slots'] <= 0) {
+        $effective_status = 'full';
+    }
 
     if (!empty($mission['start_time']) && !empty($mission['end_time'])) {
         $time_range = date('g:i A', strtotime($mission['start_time'])) . ' – ' . date('g:i A', strtotime($mission['end_time']));
@@ -28,7 +37,7 @@ function format_mission($mission)
         'full_address' => $mission['full_address'],
         'total_slots' => (int)$mission['total_slots'],
         'available_slots' => (int)$mission['available_slots'],
-        'mission_status' => $mission['mission_status']
+        'mission_status' => $effective_status
     ];
 }
 
@@ -56,7 +65,7 @@ try {
 
     if ($status === 'completed') {
         $where[] = "(mission_status = 'completed' OR mission_date < CURDATE())";
-    } else {
+    } elseif ($status !== 'all') {
         $where[] = "mission_date >= CURDATE()";
     }
 
@@ -64,7 +73,7 @@ try {
         $where[] = "available_slots > 0";
         $where[] = "mission_status = 'open'";
     } elseif ($status === 'full') {
-        $where[] = "(available_slots = 0 OR mission_status = 'closed')";
+        $where[] = "(mission_status = 'closed' OR (mission_status = 'open' AND available_slots <= 0))";
     }
 
     $sql = "SELECT *
@@ -81,7 +90,7 @@ try {
     }));
 
     $fully_booked = array_values(array_filter($missions, function ($mission) {
-        return $mission['available_slots'] <= 0 || $mission['mission_status'] === 'closed';
+        return in_array($mission['mission_status'], ['closed', 'full'], true);
     }));
 
     $completed = array_values(array_filter($missions, function ($mission) {

@@ -38,9 +38,19 @@ function validate_patient($data, $partial = false)
         if ($data['last_name'] === '') json_error('Last name is required.', 422);
     }
 
+    if (text_length($data['first_name']) > 30
+        || text_length($data['middle_name']) > 30
+        || text_length($data['last_name']) > 30) {
+        json_error('First, middle, and last name must each be 30 characters or fewer.', 422);
+    }
+
+    if (!$partial && !patient_name_parts_are_valid($data['first_name'], $data['middle_name'], $data['last_name'])) {
+        json_error('Patient name must be 65 characters or fewer combined.', 422);
+    }
+
     if (!$partial || $data['contact_number'] !== '') {
         if ($data['contact_number'] === '' || !contact_number_is_valid($data['contact_number'])) {
-            json_error('Enter a valid contact number.', 422);
+            json_error('Enter an 11-digit mobile number starting with 09.', 422);
         }
     }
 
@@ -49,7 +59,11 @@ function validate_patient($data, $partial = false)
     }
 
     if ($data['emergency_contact_number'] !== '' && !contact_number_is_valid($data['emergency_contact_number'])) {
-        json_error('Enter a valid emergency contact number.', 422);
+        json_error('Enter an 11-digit emergency mobile number starting with 09.', 422);
+    }
+
+    if (text_length($data['emergency_contact_name']) > 65) {
+        json_error('Emergency contact name must be 65 characters or fewer.', 422);
     }
 }
 

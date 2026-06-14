@@ -55,6 +55,16 @@ try {
         json_error('Booking is already cancelled.', 409);
     }
 
+    if (!$is_admin_action && $booking['booking_status'] !== 'booked') {
+        $conn->rollBack();
+        json_error('Only pending booking requests can be cancelled online. Contact the coordinator for a confirmed booking.', 409);
+    }
+
+    if ($is_admin_action && in_array($booking['booking_status'], ['completed', 'no_show'], true)) {
+        $conn->rollBack();
+        json_error('Completed and no-show bookings cannot be cancelled.', 409);
+    }
+
     $update = $conn->prepare("UPDATE bookings
                               SET booking_status = 'cancelled',
                                   approved_by = :admin_id

@@ -23,7 +23,8 @@
         const normalized = String(value || '').replace('_', '-');
         const labels = {
             open: 'Accepting Bookings',
-            closed: 'Fully Booked',
+            closed: 'Closed',
+            full: 'Fully Booked',
             completed: 'Completed',
             cancelled: 'Cancelled',
             draft: 'Draft',

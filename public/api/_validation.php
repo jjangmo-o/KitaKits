@@ -6,7 +6,20 @@ function normalize_contact_number($contact)
 
 function contact_number_is_valid($contact)
 {
-    return preg_match('/^\+?[0-9]{7,15}$/', $contact) === 1;
+    return preg_match('/^09[0-9]{9}$/', $contact) === 1;
+}
+
+function text_length($value)
+{
+    return function_exists('mb_strlen') ? mb_strlen((string)$value) : strlen((string)$value);
+}
+
+function patient_name_parts_are_valid($first_name, $middle_name, $last_name)
+{
+    return text_length($first_name) <= 30
+        && text_length($middle_name) <= 30
+        && text_length($last_name) <= 30
+        && text_length(trim(implode(' ', array_filter([$first_name, $middle_name, $last_name])))) <= 65;
 }
 
 function read_request_input()

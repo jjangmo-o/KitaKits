@@ -13,6 +13,17 @@ function pct($value)
 
 function format_admin_mission($mission)
 {
+    $effective_status = $mission['mission_status'];
+
+    if ($mission['mission_status'] === 'completed'
+        || ($mission['mission_status'] === 'open' && $mission['mission_date'] < date('Y-m-d'))) {
+        $effective_status = 'completed';
+    } elseif ($mission['mission_status'] === 'closed') {
+        $effective_status = 'closed';
+    } elseif ($mission['mission_status'] === 'open' && (int)$mission['available_slots'] <= 0) {
+        $effective_status = 'full';
+    }
+
     return [
         'mission_id' => (int)$mission['mission_id'],
         'mission_name' => $mission['mission_name'],
@@ -21,7 +32,7 @@ function format_admin_mission($mission)
         'mission_date_short' => date('M d, Y', strtotime($mission['mission_date'])),
         'city_area' => $mission['city_area'],
         'full_address' => $mission['full_address'],
-        'mission_status' => $mission['mission_status'],
+        'mission_status' => $effective_status,
         'total_slots' => (int)$mission['total_slots'],
         'available_slots' => (int)$mission['available_slots'],
         'total_bookings' => (int)$mission['total_bookings'],
@@ -130,7 +141,7 @@ try {
             return $mission['mission_status'] === 'open' && $mission['available_slots'] > 0;
         })),
         'full_missions' => count(array_filter($mission_rows, function ($mission) {
-            return $mission['mission_status'] === 'closed' || $mission['available_slots'] <= 0;
+            return in_array($mission['mission_status'], ['closed', 'full'], true);
         })),
         'completed_missions' => count(array_filter($mission_rows, function ($mission) {
             return $mission['mission_status'] === 'completed';

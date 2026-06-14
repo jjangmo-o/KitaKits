@@ -38,12 +38,12 @@ if ($patient_name === '' || $contact_number === '') {
     json_error('Please provide both your name and contact number.', 422);
 }
 
-if (strlen($patient_name) > 120) {
-    json_error('Full name must be 120 characters or fewer.', 422);
+if (text_length($patient_name) > 100) {
+    json_error('Full name must be 100 characters or fewer.', 422);
 }
 
 if (!contact_number_is_valid($contact_number)) {
-    json_error('Enter a valid contact number with 7 to 15 digits.', 422);
+    json_error('Enter an 11-digit mobile number starting with 09.', 422);
 }
 
 if ($profile['email'] !== '' && !filter_var($profile['email'], FILTER_VALIDATE_EMAIL)) {

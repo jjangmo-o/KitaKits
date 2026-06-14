@@ -13,6 +13,8 @@
     const pagePrefix = filters?.dataset.pagePrefix ?? 'pages/';
     const assetPrefix = filters?.dataset.assetPrefix || 'assets/';
     const statusInput = filters?.querySelector('input[name="status"]');
+    const sortInput = filters?.querySelector('input[name="sort"]');
+    const sortButton = filters?.querySelector('.mission-filter-icon');
     const statusTabs = filters ? Array.from(filters.querySelectorAll('.mission-status-tab')) : [];
 
     function pageUrl(page, id) {
@@ -37,12 +39,19 @@
         return mission.city_area ? `Cataract surgery mission in ${mission.city_area}` : 'Cataract surgery mission';
     }
 
-    function updateCount(availableCount) {
+    function updateCount(count, selectedStatus) {
         if (!countText) {
             return;
         }
 
-        countText.textContent = `${availableCount} ${availableCount === 1 ? 'mission' : 'missions'} currently accepting bookings`;
+        const noun = count === 1 ? 'mission' : 'missions';
+        const suffixes = {
+            all: 'shown across all statuses',
+            full: 'currently unavailable',
+            completed: 'completed',
+            available: 'currently accepting bookings'
+        };
+        countText.textContent = `${count} ${noun} ${suffixes[selectedStatus] || suffixes.available}`;
     }
 
     function missionCard(mission, variant = 'available') {
@@ -52,7 +61,9 @@
         const isFullyBooked = variant === 'full' || mission.available_slots <= 0 || mission.mission_status === 'closed';
         const isCompleted = variant === 'completed' || mission.mission_status === 'completed';
         const statusClass = isCompleted ? 'status-completed' : (isFullyBooked ? 'status-full' : 'status-available');
-        const statusLabel = isCompleted ? 'Completed' : (isFullyBooked ? 'Fully Booked' : 'Accepting Bookings');
+        const statusLabel = isCompleted
+            ? 'Completed'
+            : (isFullyBooked ? (mission.mission_status === 'closed' && availableSlots > 0 ? 'Closed' : 'Fully Booked') : 'Accepting Bookings');
         const slotsLabel = isCompleted ? 'Final slots' : (isFullyBooked ? 'Slots booked' : 'Slots remaining');
         const slotCount = totalSlots > 0 ? `${availableSlots} / ${totalSlots}` : `${availableSlots}`;
         const actions = isFullyBooked || isCompleted
@@ -116,7 +127,7 @@
                 ? fullyBooked
                 : (selectedStatus === 'completed' ? completed : (selectedStatus === 'all' ? allMissions : available));
 
-            updateCount(available.length);
+            updateCount(visibleMissions.length, selectedStatus);
 
             if (visibleMissions.length === 0) {
                 emptyState.hidden = false;
@@ -163,6 +174,18 @@
                     loadMissions();
                 });
             });
+
+            if (sortButton && sortInput) {
+                sortButton.addEventListener('click', () => {
+                    const sortBySlots = sortInput.value !== 'slots';
+                    sortInput.value = sortBySlots ? 'slots' : 'date';
+                    sortButton.classList.toggle('is-active', sortBySlots);
+                    sortButton.setAttribute('aria-pressed', String(sortBySlots));
+                    sortButton.setAttribute('aria-label', sortBySlots ? 'Sort missions by nearest date' : 'Sort missions by most slots');
+                    sortButton.title = sortBySlots ? 'Currently sorting by most slots' : 'Currently sorting by nearest date';
+                    loadMissions();
+                });
+            }
         }
 
         loadMissions();

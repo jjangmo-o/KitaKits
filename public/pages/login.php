@@ -99,5 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
     <?php kk_render_footer('pages'); ?>
+    <script src="../assets/js/password-toggle.js"></script>
 </body>
 </html>

@@ -105,7 +105,7 @@ if (current_patient_id()) {
                     <img src="assets/icons/search.svg" alt="">
                     <input type="search" name="q" placeholder="Search by organizer, location, or date...">
                 </label>
-                <button class="mission-filter-icon" type="button" aria-label="Filter missions">
+                <button class="mission-filter-icon" type="button" aria-label="Sort missions by most slots" aria-pressed="false" title="Currently sorting by nearest date">
                     <img src="assets/icons/filter.svg" alt="">
                 </button>
                 <input type="hidden" name="status" value="available">

@@ -7858,7 +7858,7 @@ button.btn-primary:hover,
 }
 
 .password-field input {
-  padding-right: 48px !important;
+  padding-right: 64px !important;
   width: 100%;
 }
 
@@ -7867,16 +7867,22 @@ button.btn-primary:hover,
   background: transparent;
   border: 0;
   color: #9ca3af;
-  cursor: default;
+  cursor: pointer;
   display: inline-flex;
-  font-size: 16px;
+  font-size: 12px;
+  font-weight: 700;
   height: 32px;
   justify-content: center;
   padding: 0;
   position: absolute;
-  right: 12px;
+  right: 8px;
   top: 8px;
-  width: 32px;
+  width: 48px;
+}
+
+.password-field button:hover,
+.password-field button:focus-visible {
+  color: var(--figma-purple);
 }
 
 .figma-auth-card .auth-switch {
@@ -8664,6 +8670,11 @@ body.page-my-bookings {
   display: block;
   height: 18px;
   width: 18px;
+}
+
+.mission-filter-icon.is-active {
+  filter: saturate(1.6);
+  opacity: 1;
 }
 
 .mission-status-tabs {

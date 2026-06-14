@@ -26,7 +26,7 @@ if (isset($_POST['submit'])) {
 
     if ($mission_name === '' || $organizer === '' || $date === '' || $location === '' || $city_area === '' || $full_address === '' || $total_slots === '') {
         $error = 'Mission name, organizer, date, location, city/area, full address, and total slots are required.';
-    } elseif (strlen($mission_name) > 150 || strlen($organizer) > 100 || strlen($location) > 255 || strlen($city_area) > 100 || strlen($full_address) > 255) {
+    } elseif (strlen($mission_name) > 100 || strlen($organizer) > 100 || strlen($location) > 255 || strlen($city_area) > 100 || strlen($full_address) > 255) {
         $error = 'Please keep mission text fields within their allowed lengths.';
     } elseif (!$date_check || $date_check->format('Y-m-d') !== $date) {
         $error = 'Please enter a valid mission date.';
@@ -101,7 +101,6 @@ function old_value($field, $default = '')
 
     <main class="container admin-workspace form-workspace">
         <a href="admin_dashboard.php" class="btn-back">
-            <span>&larr; </span>
             Back to Dashboard
         </a>
 
@@ -111,7 +110,7 @@ function old_value($field, $default = '')
 
         <form method="POST" action="" class="wide-form">
             <label for="mission_name">Mission Name</label>
-            <input type="text" id="mission_name" name="mission_name" value="<?php echo old_value('mission_name'); ?>" maxlength="150" required>
+            <input type="text" id="mission_name" name="mission_name" value="<?php echo old_value('mission_name'); ?>" maxlength="100" required>
 
             <label for="organizer_name">Organizer Name</label>
             <input type="text" id="organizer_name" name="organizer_name" value="<?php echo old_value('organizer_name'); ?>" maxlength="100" required>

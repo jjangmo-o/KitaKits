@@ -33,6 +33,9 @@ if (current_patient_id()) {
                     <a href="pages/about_cataracts.php" class="entry-secondary-action">Learn About Cataracts</a>
                 </div>
             </div>
+            <div class="entry-hero-visual" aria-hidden="true">
+                <img src="assets/images/logo.png" alt="">
+            </div>
         </section>
 
         <!-- Trust Indicators -->

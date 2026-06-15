@@ -186,6 +186,7 @@ $patient_name = trim(implode(' ', array_filter([
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard | KitaKits</title>
+    <?php kk_render_favicon('pages'); ?>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="patient-dashboard-page">

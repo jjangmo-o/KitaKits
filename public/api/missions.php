@@ -54,13 +54,25 @@ try {
     $params = [];
 
     if ($q !== '') {
-        $where[] = "(mission_name LIKE :q OR organizer_name LIKE :q OR location LIKE :q OR city_area LIKE :q OR full_address LIKE :q)";
-        $params[':q'] = '%' . $q . '%';
+        $where[] = "(mission_name LIKE :q_mission
+            OR organizer_name LIKE :q_organizer
+            OR location LIKE :q_location
+            OR city_area LIKE :q_city
+            OR full_address LIKE :q_address)";
+        $search_term = '%' . $q . '%';
+        $params[':q_mission'] = $search_term;
+        $params[':q_organizer'] = $search_term;
+        $params[':q_location'] = $search_term;
+        $params[':q_city'] = $search_term;
+        $params[':q_address'] = $search_term;
     }
 
     if ($city !== '') {
-        $where[] = "(city_area LIKE :city OR location LIKE :city OR full_address LIKE :city)";
-        $params[':city'] = '%' . $city . '%';
+        $where[] = "(city_area LIKE :city_area OR location LIKE :city_location OR full_address LIKE :city_address)";
+        $city_term = '%' . $city . '%';
+        $params[':city_area'] = $city_term;
+        $params[':city_location'] = $city_term;
+        $params[':city_address'] = $city_term;
     }
 
     if ($status === 'completed') {

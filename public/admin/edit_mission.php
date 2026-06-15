@@ -109,6 +109,7 @@ function mission_value($mission, $field)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Mission | KitaKits</title>
+    <?php kk_render_favicon('admin'); ?>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 

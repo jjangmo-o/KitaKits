@@ -7085,7 +7085,7 @@ button.btn-secondary {
   padding: 24px;
 }
 
-.assurance-icon {
+.entry-assurance .assurance-icon {
   align-items: center;
   border-radius: 10px;
   display: inline-flex;
@@ -7097,7 +7097,7 @@ button.btn-secondary {
   width: 44px;
 }
 
-.assurance-icon img {
+.entry-assurance .assurance-icon img {
   display: block;
   height: 22px;
   margin: 0;
@@ -7894,11 +7894,20 @@ button.btn-primary:hover,
   text-align: center;
 }
 
+.figma-auth-card .auth-switch span {
+  display: inline;
+  line-height: 1.4;
+  margin: 0;
+}
+
 .figma-auth-card .auth-switch a {
   background: transparent;
   color: var(--figma-primary);
+  display: inline;
   font-size: 13px;
   font-weight: 700;
+  line-height: 1.4;
+  min-height: 0;
   padding: 0;
 }
 

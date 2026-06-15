@@ -72,6 +72,15 @@ if (!function_exists('kk_nav_link')) {
     }
 }
 
+if (!function_exists('kk_render_favicon')) {
+    function kk_render_favicon($section = 'pages')
+    {
+        $logo = kk_route($section, 'asset') . 'images/logo.png';
+        echo '<link rel="icon" type="image/png" href="' . kk_html($logo) . '">' . PHP_EOL;
+        echo '    <link rel="apple-touch-icon" href="' . kk_html($logo) . '">' . PHP_EOL;
+    }
+}
+
 if (!function_exists('kk_render_header')) {
     function kk_render_header($options = [])
     {

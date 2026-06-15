@@ -205,6 +205,7 @@ $is_bookable = (int)$mission['available_slots'] > 0 && $mission['mission_date'] 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book a Slot | KitaKits</title>
+    <?php kk_render_favicon('pages'); ?>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 

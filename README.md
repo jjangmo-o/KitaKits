@@ -1,6 +1,6 @@
 # KitaKits
 
-KitaKits is a PHP and MySQL web application for listing free cataract surgery missions, helping patients book available slots, and giving administrators a simple dashboard for managing missions and viewing bookings.
+KitaKits is a PHP and MySQL web application for listing free cataract surgery missions, helping patients book available slots, and giving administrators a simple dashboard for managing missions and viewing bookings. [Live Demo](https://kitakits.free.nf/)
 
 ## What This Project Does
 

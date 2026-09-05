@@ -1,6 +1,6 @@
 # KitaKits
 
-KitaKits is a PHP and MySQL web application for listing free cataract surgery missions, helping patients book available slots, and giving administrators a simple dashboard for managing missions and viewing bookings. [Live Demo](https://kitakits.free.nf/)
+KitaKits is a PHP and MySQL web application for listing free cataract surgery missions, helping patients book available slots, and giving administrators a simple dashboard for managing missions and viewing bookings. Click this for [Live Demo](https://kitakits.free.nf/)
 
 ## What This Project Does
 
@@ -35,29 +35,6 @@ The project has two main sides:
    - Admin can review patient pre-screening flags.
    - Admin can view a patient directory linked to bookings.
    - Admin can update content/advisory pages shown on the homepage.
-
-## Demo Admin Login
-
-The homepage shows an **Admin Dashboard** button for project checking. The dashboard is now gated.
-
-```text
-Email: admin@kitakits.local
-Password: admin123
-```
-
-This is only for local demo use. Replace the seeded admin password hash before production use.
-
-## Demo Patient Login
-
-The patient dashboard is available from **Patient Portal** on the homepage.
-
-```text
-Contact: 09111111111
-Password: patient123
-```
-
-Other seeded patient contacts also use `patient123` after importing the latest SQL. The active patient flow is now opening page -> login/sign-up -> Patient Portal.
-
 
 ## Project Structure
 
@@ -96,18 +73,6 @@ KitaKits/
 ├── index.php
 └── README.md
 ```
-
-The root `index.php` redirects to `public/index.php` so the app still opens from the project root in XAMPP. Main patient pages live in `public/pages/`, admin pages live in `public/admin/`, API endpoints live in `public/api/`, and the database connection is kept outside the public folder in `app/config/db.php`.
-
-## Database
-
-The project uses MySQL through XAMPP. The database file is:
-
-```text
-database/kitakits_db.sql
-```
-
-This SQL file should be imported into phpMyAdmin so the app can access the required tables and rows.
 
 ## Setup Instructions
 
@@ -157,15 +122,3 @@ Database: kitakits_db
 Username: root
 Password: empty
 ```
-
-## More Notes to take po 
-
-- The project should be run through XAMPP, not by opening the PHP files directly.
-- The `database/kitakits_db.sql` file must be imported before testing database-related features.
-- If you already imported an older SQL version, re-import the updated `database/kitakits_db.sql` so the new tables, views, triggers, and seed statuses match the app.
-- Bookings made in the app are saved in MySQL.
-- New bookings are saved as `booked` requests first. Admin confirmation changes them to `confirmed`, and the SQL triggers update slot counts and status history.
-- Printable slips appear only for `confirmed` bookings. The slip contains the `KK-YYYY-XXXXX` reference number, mission name/date/address, patient name/contact, booking status, headcount, and day-of instructions.
-- Patient Portal, pre-screening, and printable slips all read from the same `patients`, `bookings`, `medical_intake_forms`, and `missions` records.
-- After importing `kitakits_db.sql`, you can cross-check the database rows po through phpMyAdmin or the admin dashboard :>
-- The visible admin dashboard button is for demonstration only po and rest assured that it should be secured further in a real deployment.
